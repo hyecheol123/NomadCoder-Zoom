@@ -2,6 +2,18 @@ import express from 'express';
 
 const app = express();
 
-console.log('Hello');
+// Template engine
+app.set('view engine', 'pug');
+app.set('views', __dirname + '/views/');
 
-app.listen(3000);
+// Static files are served at /public path
+app.use('/public', express.static(__dirname + '/public'));
+
+// Landing page
+app.get('/', (req, res) => {
+  res.render('home');
+});
+
+app.listen(3000, () => {
+  console.log('Listening on http://localhost:3000');
+});
