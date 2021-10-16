@@ -1,0 +1,35 @@
+{
+  "name": "nomadcoder-zoom",
+  "version": "1.0.0",
+  "description": "Clone Coding Repository for \"Zoom Clone Coding\" Course of NomadCoder (Using WebRTC and Websockets)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyecheol123/NomadCoder-Zoom.git"
+  },
+  "author": "Hyecheol (Jerry) Jang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hyecheol123/NomadCoder-Zoom/issues"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "lint": "prettier --write \"src/**/*.+(js|jsx|json|css|md)\" && eslint \"src/**/*.js\"",
+    "lint:fix": "eslint --fix \"src/**/*.js\""
+  },
+  "homepage": "https://github.com/hyecheol123/NomadCoder-Zoom#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.13",
+    "prettier": "^2.4.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pug": "^3.0.2"
+  }
+}

@@ -21,7 +21,7 @@ At the end of the course, I am expected to build both front-end and back-end of 
 ### Zoom Clone
 
 Followed the lecture contents to build Clone of Zoom.  
-Used 
+Used NodeJS, WebRTC, Websockets, SocketIO, and HTML/CSS/vanilla-JS.
 
 **Feature List (From Lecture)**
 
