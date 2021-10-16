@@ -5,10 +5,15 @@ html(lang="en")
     meta(http-equiv="X-UA-Compatible", content="IE-edge")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Zoom Clone 
-    link(rel="stylesheet" href="https://unpkg.com/mvp.css")
   body 
     header 
       h1 Zoom Clone
     main 
-      h2 Welcome to Zoom
+      form#nickname
+        input(type="text", placeholder="Choose your nickname", required)
+        buttton Save
+      ul 
+      form#message
+        input(type="text", placeholder="write a message", required)
+        buttton Send
     script(src="public/js/app.js")

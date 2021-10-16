@@ -1,3 +1,4 @@
+import http from 'http';
 import express from 'express';
 
 const app = express();
@@ -10,10 +11,18 @@ app.set('views', __dirname + '/views/');
 app.use('/public', express.static(__dirname + '/public'));
 
 // Landing page
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.render('home');
 });
 
-app.listen(3000, () => {
+// Redirect other urls to home
+app.get('/*', (_, res) => {
+  res.redirect('/');
+});
+
+// Setup Server
+const httpServer = http.createServer(app);
+
+httpServer.listen(3000, () => {
   console.log('Listening on http://localhost:3000');
 });

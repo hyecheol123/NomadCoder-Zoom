@@ -12,9 +12,10 @@
     "url": "https://github.com/hyecheol123/NomadCoder-Zoom/issues"
   },
   "scripts": {
+    "start": "babel-node src/server.js",
     "dev": "nodemon -L",
-    "lint": "prettier --write \"src/**/*.+(js|jsx|json|css|md)\" && eslint \"src/**/*.js\"",
-    "lint:fix": "eslint --fix \"src/**/*.js\""
+    "lint": "prettier --check \"src/**/*.js\" && eslint \"src/**/*.js\"",
+    "lint:fix": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\""
   },
   "homepage": "https://github.com/hyecheol123/NomadCoder-Zoom#readme",
   "devDependencies": {
@@ -23,13 +24,15 @@
     "@babel/node": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
     "eslint": "^8.0.1",
+    "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.13",
-    "prettier": "^2.4.1"
+    "prettier": "2.4.1"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "socket.io": "^4.3.0"
   }
 }
