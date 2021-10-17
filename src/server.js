@@ -30,10 +30,18 @@ const socketIOServer = SocketIO(httpServer);
 socketIOServer.on('connection', (socket) => {
   // room: Entering/creating the room
   socket.on('enter-room', (roomName, done) => {
-    // Join the room
-    socket.join(roomName);
+    socket.join(roomName); // Join the room
     // Able to call a function on the front-end after server's operation finishes
     done(roomName);
+    // Notify everyone new member entered
+    // Welcome mesage does not sent to the one just joined
+    socket.to(roomName).emit('welcome');
+  });
+
+  // room: Left the room
+  socket.on('disconnecting', (reason) => {
+    // Notify everyone on the chat room the user participating
+    socket.rooms.forEach((room) => socket.to(room).emit('bye'));
   });
 });
 

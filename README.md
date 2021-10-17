@@ -34,6 +34,9 @@ At the end of the course, I am expected to build both front-end and back-end of 
   - SocketIO has more advanced features (including room, broadcasting, etc.) than WebSocket.
     - Room is supported natively, using **Socket.join(\<room name>)** function.
       - List the rooms socket currently in: **Socket.rooms**.
+      - On server, specify the recipient of message by using `Socket.to(<room name / socket ID>)`
+        - Will send message except for the sender
+        - Some other ways to specifiy recipient: https://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender
   - Need to import a dedicated javascript file to use it from the web browser.
     - `<Server_Host_URL>/socket.io/socket.io.js`
     - The API documentation for `socketIO` can be found in https://socket.io/docs/v4/
