@@ -32,6 +32,15 @@ At the end of the course, I am expected to build both front-end and back-end of 
     When it initiate the communication, it establishes connection with the most suitable way.
     Therefore, though the browser does not support WebSocket, SocketIO enables the browser to communicate in bi-direction.
   - SocketIO has more advanced features (including room, broadcasting, etc.) than WebSocket.
+    - Room is supported natively, using **Socket.join(\<room name>)** function.
+      - List the rooms socket currently in: **Socket.rooms**.
+  - Need to import a dedicated javascript file to use it from the web browser.
+    - `<Server_Host_URL>/socket.io/socket.io.js`
+    - The API documentation for `socketIO` can be found in https://socket.io/docs/v4/
+  - Using SocketIO, we can send any events, while WebSocket only support `message` event.
+    - No need to stringify object to generate string.
+    - Able to pass as many arguments as we want when we emit a message
+      - Able to trigger a functions on front-end (provided as the last argument while emit a message) from back-end (also able to pass arguments)
 
 ## Project
 
@@ -44,6 +53,7 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
 
 - Chat
   - Sending/Receiving Texts
+  - Chat room (Groups of WebSockets)
 
 **What I added/modified**
 
@@ -51,4 +61,4 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
 | :----------------------------: |
 | _Demo Image of Zoom Clone App_ |
 
-Code Link:
+Code Link: https://github.com/hyecheol123/NomadCoder-Zoom
