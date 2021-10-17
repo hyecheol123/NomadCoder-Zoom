@@ -57,6 +57,7 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
 - Chat
   - Sending/Receiving Texts
   - Chat room (Groups of WebSockets)
+  - Set nickname
 
 **What I added/modified**
 

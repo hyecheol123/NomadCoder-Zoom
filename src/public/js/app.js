@@ -37,13 +37,23 @@ roomJoinForm.addEventListener('submit', (submitEvent) => {
     chatRoom.hidden = false;
     chatRoom.querySelector('h3').innerText = `Room ${roomName}`;
 
+    // EventListener for setting nickname
+    const nameForm = document.querySelector('#room #name');
+    nameForm.addEventListener('submit', (submitEvent) => {
+      submitEvent.preventDefault();
+
+      // Set nickname
+      const input = nameForm.querySelector('input');
+      socket.emit('nickname', input.value);
+    });
+
     // EventListener for sending new message
-    const chatForm = document.querySelector('#room form');
-    chatForm.addEventListener('submit', (submitEvent) => {
+    const msgForm = document.querySelector('#room #msg');
+    msgForm.addEventListener('submit', (submitEvent) => {
       submitEvent.preventDefault();
 
       // Send new message
-      const input = chatForm.querySelector('input');
+      const input = msgForm.querySelector('input');
       const value = input.value;
       socket.emit('new-message', value, roomName, () => {
         addMessage(`You: ${value}`);
@@ -55,13 +65,13 @@ roomJoinForm.addEventListener('submit', (submitEvent) => {
 });
 
 // Receive welcome message (Someone Joined room)
-socket.on('welcome', () => {
-  addMessage('someone joined');
+socket.on('welcome', (user) => {
+  addMessage(`${user} joined`);
 });
 
 // Received bye message (Someone left the room)
-socket.on('bye', () => {
-  addMessage('someone left');
+socket.on('bye', (user) => {
+  addMessage(`${user} left`);
 });
 
 // Received new message
