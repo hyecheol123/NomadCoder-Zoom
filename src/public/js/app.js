@@ -1,8 +1,6 @@
 // HTML Elements
 const roomJoinForm = document.querySelector('#welcome form');
-const roomJoinFormInput = roomJoinForm.querySelector('input');
 const chatRoom = document.querySelector('#room');
-const chatList = document.querySelector('#room ul');
 
 // Global variable
 let roomName; // chat room name
@@ -19,15 +17,18 @@ const socket = io();
  * @param {string} msg message to add on the chatList
  */
 function addMessage(msg) {
+  const chatList = document.querySelector('#room ul');
   const li = document.createElement('li');
   li.innerText = msg;
   chatList.appendChild(li);
 }
 
-// Create/Enter the room
+// EventListener for joining new room
 roomJoinForm.addEventListener('submit', (submitEvent) => {
   submitEvent.preventDefault();
 
+  // Create/Enter the room
+  const roomJoinFormInput = roomJoinForm.querySelector('input');
   socket.emit('enter-room', roomJoinFormInput.value, (joinedRoomName) => {
     roomName = joinedRoomName; // Save the room name
 
@@ -35,6 +36,20 @@ roomJoinForm.addEventListener('submit', (submitEvent) => {
     roomJoinForm.hidden = true;
     chatRoom.hidden = false;
     chatRoom.querySelector('h3').innerText = `Room ${roomName}`;
+
+    // EventListener for sending new message
+    const chatForm = document.querySelector('#room form');
+    chatForm.addEventListener('submit', (submitEvent) => {
+      submitEvent.preventDefault();
+
+      // Send new message
+      const input = chatForm.querySelector('input');
+      const value = input.value;
+      socket.emit('new-message', value, roomName, () => {
+        addMessage(`You: ${value}`);
+      });
+      input.value = '';
+    });
   });
   roomJoinFormInput.value = '';
 });
@@ -47,4 +62,9 @@ socket.on('welcome', () => {
 // Received bye message (Someone left the room)
 socket.on('bye', () => {
   addMessage('someone left');
+});
+
+// Received new message
+socket.on('new-message', (msg) => {
+  addMessage(msg);
 });

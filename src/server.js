@@ -39,9 +39,16 @@ socketIOServer.on('connection', (socket) => {
   });
 
   // room: Left the room
-  socket.on('disconnecting', (reason) => {
+  socket.on('disconnecting', () => {
     // Notify everyone on the chat room the user participating
     socket.rooms.forEach((room) => socket.to(room).emit('bye'));
+  });
+
+  // Chat: New Message
+  socket.on('new-message', (msg, roomName, done) => {
+    // Send the message to the chat room members
+    socket.to(roomName).emit('new-message', msg);
+    done();
   });
 });
 
