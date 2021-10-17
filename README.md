@@ -61,6 +61,9 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
 
 **What I added/modified**
 
+- Chat
+  - Set nickname before user enter the room
+
 |             ![]()              |
 | :----------------------------: |
 | _Demo Image of Zoom Clone App_ |

@@ -1,12 +1,17 @@
 // HTML Elements
-const roomJoinForm = document.querySelector('#welcome form');
-const chatRoom = document.querySelector('#room');
+const nicknameBox = document.querySelector('#nickname');
+const nicknameForm = nicknameBox.querySelector('form');
+const joinRoomBox = document.querySelector('#join-room');
+const joinRoomForm = joinRoomBox.querySelector('form');
+const chatRoomBox = document.querySelector('#chatroom');
+const chatRoomForm = chatRoomBox.querySelector('form');
 
 // Global variable
 let roomName; // chat room name
 
-// At the beginning, the chatRoom is hidden (Not yet joined to the chat room)
-chatRoom.hidden = true;
+// Display
+joinRoomBox.hidden = true;
+chatRoomBox.hidden = true;
 
 // Will use same doemain (window.location) address to establish connection
 const socket = io();
@@ -17,55 +22,59 @@ const socket = io();
  * @param {string} msg message to add on the chatList
  */
 function addMessage(msg) {
-  const chatList = document.querySelector('#room ul');
+  const chatList = chatRoomBox.querySelector('ul');
   const li = document.createElement('li');
   li.innerText = msg;
   chatList.appendChild(li);
 }
 
+// EventListener for setting nickname
+nicknameForm.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  // Set nickname
+  const input = nicknameForm.querySelector('input');
+  socket.emit('nickname', input.value, (nickname) => {
+    // Display
+    nicknameBox.hidden = true;
+    joinRoomBox.hidden = false;
+    document.querySelector('body header h4').innerText = `Hello ${nickname}`;
+  });
+  input.value = '';
+});
+
 // EventListener for joining new room
-roomJoinForm.addEventListener('submit', (submitEvent) => {
+joinRoomForm.addEventListener('submit', (submitEvent) => {
   submitEvent.preventDefault();
 
   // Create/Enter the room
-  const roomJoinFormInput = roomJoinForm.querySelector('input');
-  socket.emit('enter-room', roomJoinFormInput.value, (joinedRoomName) => {
+  const joinRoomFormInput = joinRoomForm.querySelector('input');
+  socket.emit('enter-room', joinRoomFormInput.value, (joinedRoomName) => {
     roomName = joinedRoomName; // Save the room name
 
     // Display
-    roomJoinForm.hidden = true;
-    chatRoom.hidden = false;
-    chatRoom.querySelector('h3').innerText = `Room ${roomName}`;
-
-    // EventListener for setting nickname
-    const nameForm = document.querySelector('#room #name');
-    nameForm.addEventListener('submit', (submitEvent) => {
-      submitEvent.preventDefault();
-
-      // Set nickname
-      const input = nameForm.querySelector('input');
-      socket.emit('nickname', input.value);
-    });
-
-    // EventListener for sending new message
-    const msgForm = document.querySelector('#room #msg');
-    msgForm.addEventListener('submit', (submitEvent) => {
-      submitEvent.preventDefault();
-
-      // Send new message
-      const input = msgForm.querySelector('input');
-      const value = input.value;
-      socket.emit('new-message', value, roomName, () => {
-        addMessage(`You: ${value}`);
-      });
-      input.value = '';
-    });
+    joinRoomBox.hidden = true;
+    chatRoomBox.hidden = false;
+    chatRoomBox.querySelector('h3').innerText = `Room: ${roomName}`;
   });
-  roomJoinFormInput.value = '';
+  joinRoomFormInput.value = '';
+});
+
+// EventListener for sending new message
+chatRoomForm.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  // Send new message
+  const input = chatRoomForm.querySelector('input');
+  const value = input.value;
+  socket.emit('new-message', value, roomName, () => {
+    addMessage(`You: ${value}`);
+  });
+  input.value = '';
 });
 
 // Receive welcome message (Someone Joined room)
-socket.on('welcome', (user) => {
+socket.on('join', (user) => {
   addMessage(`${user} joined`);
 });
 
