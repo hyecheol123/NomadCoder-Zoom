@@ -2,7 +2,8 @@
 const nicknameBox = document.querySelector('#nickname');
 const nicknameForm = nicknameBox.querySelector('form');
 const joinRoomBox = document.querySelector('#join-room');
-const joinRoomForm = joinRoomBox.querySelector('form');
+const joinRoomForm = joinRoomBox.querySelector('#enter-room');
+const joinRoomChangeNickname = joinRoomBox.querySelector('#change-nickname');
 const chatRoomBox = document.querySelector('#chatroom');
 const chatRoomForm = chatRoomBox.querySelector('#message');
 const chatRoomExit = chatRoomBox.querySelector('#exit');
@@ -71,7 +72,6 @@ nicknameForm.addEventListener('submit', (submitEvent) => {
     chatRoomBox.hidden = true;
     document.querySelector('body header h4').innerText = `Hello ${nickname}`;
   });
-  input.value = '';
 
   // Show the opened room list
   displayPublicRooms(); // at t = 0
@@ -95,6 +95,16 @@ joinRoomForm.addEventListener('submit', (submitEvent) => {
     chatRoomBox.querySelector('h3').innerText = `Room: ${currentRoomName}`;
   });
   joinRoomFormInput.value = '';
+});
+
+// EventListener for changing username (go to the main screen)
+joinRoomChangeNickname.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  // Go back to main screen
+  nicknameBox.hidden = false;
+  joinRoomBox.hidden = true;
+  chatRoomBox.hidden = true;
 });
 
 // EventListener for sending new message

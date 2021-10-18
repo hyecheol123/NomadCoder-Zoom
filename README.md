@@ -82,6 +82,8 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
       (e.g. When user exit from current room to join another)
     - To update the current opened room list, it will automatically pull the room list every 3 seconds before the user enters the room.
   - Exit the room to join another room
+  - Change nickname
+    - Need to exit the room to change the nickname
 
 |             ![]()              |
 | :----------------------------: |
