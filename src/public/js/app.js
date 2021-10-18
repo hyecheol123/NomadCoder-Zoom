@@ -4,14 +4,16 @@ const nicknameForm = nicknameBox.querySelector('form');
 const joinRoomBox = document.querySelector('#join-room');
 const joinRoomForm = joinRoomBox.querySelector('form');
 const chatRoomBox = document.querySelector('#chatroom');
-const chatRoomForm = chatRoomBox.querySelector('form');
+const chatRoomForm = chatRoomBox.querySelector('#message');
+const chatRoomExit = chatRoomBox.querySelector('#exit');
 
 // Global variable
 let currentRoomName; // chat room name
 let currentPublicRooms; // place to store current public room list
 let intervalDisplayPublicRooms; // interval to call displayPublicRoom() every 3 seconds.
 
-// Display
+// Display: At the beginning, show the nickname box
+nicknameBox.hidden = false;
 joinRoomBox.hidden = true;
 chatRoomBox.hidden = true;
 
@@ -63,9 +65,10 @@ nicknameForm.addEventListener('submit', (submitEvent) => {
   // Set nickname
   const input = nicknameForm.querySelector('input');
   socket.emit('nickname', input.value, (nickname) => {
-    // Display
+    // Display: Show joinRoomBox
     nicknameBox.hidden = true;
     joinRoomBox.hidden = false;
+    chatRoomBox.hidden = true;
     document.querySelector('body header h4').innerText = `Hello ${nickname}`;
   });
   input.value = '';
@@ -85,7 +88,8 @@ joinRoomForm.addEventListener('submit', (submitEvent) => {
   socket.emit('enter-room', joinRoomFormInput.value, (joinedRoomName) => {
     currentRoomName = joinedRoomName; // Save the room name
 
-    // Display
+    // Display: Show the chatRoomBox
+    nicknameBox.hidden = true;
     joinRoomBox.hidden = true;
     chatRoomBox.hidden = false;
     chatRoomBox.querySelector('h3').innerText = `Room: ${currentRoomName}`;
@@ -104,6 +108,28 @@ chatRoomForm.addEventListener('submit', (submitEvent) => {
     addMessage(`You: ${value}`);
   });
   input.value = '';
+});
+
+// EventListener for exit a chat room
+chatRoomExit.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  // Leave from the room
+  socket.emit('leave-room', currentRoomName, () => {
+    // Left room
+    currentRoomName = '';
+    chatRoomBox.querySelector('h3').innerText = '';
+    chatRoomBox.querySelector('ul').innerHTML = '';
+
+    // Display: Back to joinRoomBox
+    nicknameBox.hidden = true;
+    joinRoomBox.hidden = false;
+    chatRoomBox.hidden = true;
+  });
+
+  // Show the opened room list
+  displayPublicRooms(); // at t = 0
+  intervalDisplayPublicRooms = setInterval(displayPublicRooms, 3000); // at t = 3n
 });
 
 // Receive welcome message (Someone Joined room)

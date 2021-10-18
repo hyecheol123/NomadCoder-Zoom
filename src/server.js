@@ -54,6 +54,14 @@ socketIOServer.on('connection', (socket) => {
     socket.to(roomName).emit('join', socket.nickname);
   });
 
+  // room: Leaving the room
+  socket.on('leave-room', (roomName, done) => {
+    socket.leave(roomName); // Leave the room
+    done(); // report client that user successfully left the room
+    // Notify other users in the room that the user has left
+    socketIOServer.in(roomName).emit('bye', socket.nickname);
+  });
+
   // room: List existing rooms
   socket.on('list-rooms', (done) => {
     // Variables
