@@ -81,19 +81,27 @@ nicknameForm.addEventListener('submit', (submitEvent) => {
 // EventListener for joining new room
 joinRoomForm.addEventListener('submit', (submitEvent) => {
   submitEvent.preventDefault();
-  clearInterval(intervalDisplayPublicRooms); // no need to get public rooms list more
+  // no need to get public rooms list more
+  clearInterval(intervalDisplayPublicRooms);
 
   // Create/Enter the room
   const joinRoomFormInput = joinRoomForm.querySelector('input');
-  socket.emit('enter-room', joinRoomFormInput.value, (joinedRoomName) => {
-    currentRoomName = joinedRoomName; // Save the room name
+  socket.emit(
+    'enter-room',
+    joinRoomFormInput.value,
+    (joinedRoomName, userCount) => {
+      currentRoomName = joinedRoomName; // Save the room name
+      currentUserCount = userCount;
 
-    // Display: Show the chatRoomBox
-    nicknameBox.hidden = true;
-    joinRoomBox.hidden = true;
-    chatRoomBox.hidden = false;
-    chatRoomBox.querySelector('h3').innerText = `Room: ${currentRoomName}`;
-  });
+      // Display: Show the chatRoomBox
+      nicknameBox.hidden = true;
+      joinRoomBox.hidden = true;
+      chatRoomBox.hidden = false;
+      chatRoomBox.querySelector(
+        'h3'
+      ).innerText = `Room: ${currentRoomName} (${userCount})`;
+    }
+  );
   joinRoomFormInput.value = '';
 });
 
@@ -143,13 +151,19 @@ chatRoomExit.addEventListener('submit', (submitEvent) => {
 });
 
 // Receive welcome message (Someone Joined room)
-socket.on('join', (user) => {
+socket.on('join', (user, userCount) => {
   addMessage(`${user} joined`);
+  chatRoomBox.querySelector(
+    'h3'
+  ).innerText = `Room: ${currentRoomName} (${userCount})`;
 });
 
 // Received bye message (Someone left the room)
-socket.on('bye', (user) => {
+socket.on('bye', (user, userCount) => {
   addMessage(`${user} left`);
+  chatRoomBox.querySelector(
+    'h3'
+  ).innerText = `Room: ${currentRoomName} (${userCount})`;
 });
 
 // Received new message

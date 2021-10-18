@@ -26,6 +26,22 @@ const httpServer = http.createServer(app);
 // eslint-disable-next-line new-cap
 const socketIOServer = SocketIO(httpServer);
 
+/**
+ * Helper method to count user in the room
+ *
+ * @param {string} roomName name of room
+ * @return {number} number indicates how many souls in the room
+ */
+function countUserInRoom(roomName) {
+  // Query the size of room
+  const userCnt = socketIOServer.sockets.adapter.rooms.get(roomName)?.size;
+  if (userCnt === undefined) {
+    return 0; // Error & No one in the room
+  } else {
+    return userCnt;
+  }
+}
+
 // Socket.IO
 socketIOServer.on('connection', (socket) => {
   socket['nickname'] = 'anonymous';
@@ -40,7 +56,10 @@ socketIOServer.on('connection', (socket) => {
   socket.on('disconnecting', () => {
     // Notify everyone on the chat room the user participating
     socket.rooms.forEach((room) =>
-      socket.to(room).emit('bye', socket.nickname)
+      socket
+        .to(room)
+        // User not left, s/he is still in the room (leaving the room)
+        .emit('bye', socket.nickname, countUserInRoom(room) - 1)
     );
   });
 
@@ -48,10 +67,13 @@ socketIOServer.on('connection', (socket) => {
   socket.on('enter-room', (roomName, done) => {
     socket.join(roomName); // Join the room
     // Able to call a function on the front-end after server's operation finishes
-    done(roomName);
+    done(roomName, countUserInRoom(roomName)); // User already in the room
     // Notify everyone new member entered
     // Welcome mesage does not sent to the one just joined
-    socket.to(roomName).emit('join', socket.nickname);
+    socket
+      .to(roomName)
+      // Also notifying how many souls on board
+      .emit('join', socket.nickname, countUserInRoom(roomName));
   });
 
   // room: Leaving the room
@@ -59,7 +81,10 @@ socketIOServer.on('connection', (socket) => {
     socket.leave(roomName); // Leave the room
     done(); // report client that user successfully left the room
     // Notify other users in the room that the user has left
-    socketIOServer.in(roomName).emit('bye', socket.nickname);
+    socketIOServer
+      .in(roomName)
+      // User already left the room
+      .emit('bye', socket.nickname, countUserInRoom(roomName));
   });
 
   // room: List existing rooms

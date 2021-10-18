@@ -54,6 +54,8 @@ At the end of the course, I am expected to build both front-end and back-end of 
   Any value (either objects or primitive values) can be used as either key or a value
   - Iterating Map gives (value, map, key) pair. (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach)
 - [**Set**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set): store **unique** values of any type.
+- [**Optional chaining (?.)**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) is used to read value in the object, but check whether the reference is nullish or not.
+  If nullish (`null` or `undefined`), the expression with return `undefined`.
 
 ## Project
 
