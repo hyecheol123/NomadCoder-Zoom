@@ -30,6 +30,20 @@ const socketIOServer = SocketIO(httpServer);
 socketIOServer.on('connection', (socket) => {
   socket['nickname'] = 'anonymous';
 
+  // user: Nickname
+  socket.on('nickname', (nickname, done) => {
+    socket['nickname'] = nickname;
+    done(nickname);
+  });
+
+  // user: disconnecting
+  socket.on('disconnecting', () => {
+    // Notify everyone on the chat room the user participating
+    socket.rooms.forEach((room) =>
+      socket.to(room).emit('bye', socket.nickname)
+    );
+  });
+
   // room: Entering/creating the room
   socket.on('enter-room', (roomName, done) => {
     socket.join(roomName); // Join the room
@@ -38,14 +52,6 @@ socketIOServer.on('connection', (socket) => {
     // Notify everyone new member entered
     // Welcome mesage does not sent to the one just joined
     socket.to(roomName).emit('join', socket.nickname);
-  });
-
-  // room: Left the room
-  socket.on('disconnecting', () => {
-    // Notify everyone on the chat room the user participating
-    socket.rooms.forEach((room) =>
-      socket.to(room).emit('bye', socket.nickname)
-    );
   });
 
   // room: List existing rooms
@@ -65,12 +71,6 @@ socketIOServer.on('connection', (socket) => {
 
     // Send client list of rooms
     done(publicRooms);
-  });
-
-  // Chat: Nickname
-  socket.on('nickname', (nickname, done) => {
-    socket['nickname'] = nickname;
-    done(nickname);
   });
 
   // Chat: New Message

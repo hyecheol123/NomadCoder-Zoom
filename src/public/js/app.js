@@ -7,7 +7,9 @@ const chatRoomBox = document.querySelector('#chatroom');
 const chatRoomForm = chatRoomBox.querySelector('form');
 
 // Global variable
-let roomName; // chat room name
+let currentRoomName; // chat room name
+let currentPublicRooms; // place to store current public room list
+let intervalDisplayPublicRooms; // interval to call displayPublicRoom() every 3 seconds.
 
 // Display
 joinRoomBox.hidden = true;
@@ -28,6 +30,32 @@ function addMessage(msg) {
   chatList.appendChild(li);
 }
 
+/**
+ * Helper method to display the list of public rooms
+ */
+function displayPublicRooms() {
+  socket.emit('list-rooms', (publicRooms) => {
+    if (JSON.stringify(currentPublicRooms) === JSON.stringify(publicRooms)) {
+      // Check for room list updates
+      return;
+    } else {
+      // When room list updated
+      currentPublicRooms = publicRooms;
+
+      // Empty the displayed list
+      const joinRoomList = joinRoomBox.querySelector('#opened-room-list ul');
+      joinRoomList.innerHTML = '';
+
+      // Display the room list
+      publicRooms.forEach((publicRoom) => {
+        const li = document.createElement('li');
+        li.innerText = publicRoom;
+        joinRoomList.appendChild(li);
+      });
+    }
+  });
+}
+
 // EventListener for setting nickname
 nicknameForm.addEventListener('submit', (submitEvent) => {
   submitEvent.preventDefault();
@@ -43,30 +71,24 @@ nicknameForm.addEventListener('submit', (submitEvent) => {
   input.value = '';
 
   // Show the opened room list
-  socket.emit('list-rooms', (publicRooms) => {
-    // Display the room list
-    const joinRoomList = joinRoomBox.querySelector('#opened-room-list ul');
-    publicRooms.forEach((roomName) => {
-      const li = document.createElement('li');
-      li.innerText = roomName;
-      joinRoomList.appendChild(li);
-    });
-  });
+  displayPublicRooms(); // at t = 0
+  intervalDisplayPublicRooms = setInterval(displayPublicRooms, 3000); // at t = 3n
 });
 
 // EventListener for joining new room
 joinRoomForm.addEventListener('submit', (submitEvent) => {
   submitEvent.preventDefault();
+  clearInterval(intervalDisplayPublicRooms); // no need to get public rooms list more
 
   // Create/Enter the room
   const joinRoomFormInput = joinRoomForm.querySelector('input');
   socket.emit('enter-room', joinRoomFormInput.value, (joinedRoomName) => {
-    roomName = joinedRoomName; // Save the room name
+    currentRoomName = joinedRoomName; // Save the room name
 
     // Display
     joinRoomBox.hidden = true;
     chatRoomBox.hidden = false;
-    chatRoomBox.querySelector('h3').innerText = `Room: ${roomName}`;
+    chatRoomBox.querySelector('h3').innerText = `Room: ${currentRoomName}`;
   });
   joinRoomFormInput.value = '';
 });
@@ -78,7 +100,7 @@ chatRoomForm.addEventListener('submit', (submitEvent) => {
   // Send new message
   const input = chatRoomForm.querySelector('input');
   const value = input.value;
-  socket.emit('new-message', value, roomName, () => {
+  socket.emit('new-message', value, currentRoomName, () => {
     addMessage(`You: ${value}`);
   });
   input.value = '';

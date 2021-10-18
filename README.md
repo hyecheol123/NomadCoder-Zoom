@@ -49,6 +49,7 @@ At the end of the course, I am expected to build both front-end and back-end of 
       When server restarts, all room, message, and socket disappear.
     - Using clustered servers, they cannot share the same memory pool; therefore, to access to other connections in different server, we need to use other adapter rather than In-Memory.
     - Contain information about who is connected and how many rooms are created.
+  - **Server.sockets.emit()** to notify everyone
 - [**Map**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map): Holds key-value pairs and remember the insertion orders.
   Any value (either objects or primitive values) can be used as either key or a value
   - Iterating Map gives (value, map, key) pair. (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach)
@@ -76,6 +77,10 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
 - Chat
   - Set nickname before user enter the room
   - Show the existing room list when users choose which room to enter
+  - Does not implement left/join alarm
+    - In lecture, the application sending the list of all rooms when users join/left the room, but I believe there is a better way and timing to get the list of rooms.
+      (e.g. When user exit from current room to join another)
+    - To update the current opened room list, it will automatically pull the room list every 3 seconds before the user enters the room.
 
 |             ![]()              |
 | :----------------------------: |
