@@ -48,6 +48,25 @@ socketIOServer.on('connection', (socket) => {
     );
   });
 
+  // room: List existing rooms
+  socket.on('list-rooms', (done) => {
+    // Variables
+    const sids = socketIOServer.sockets.adapter.sids; // socketIDs
+    const rooms = socketIOServer.sockets.adapter.rooms; // Rooms
+    const publicRooms = []; // list of public rooms
+
+    // Iterate through the room list to retrieve public room list
+    rooms.forEach((_, key) => {
+      // The private room's name is equal to the socketID
+      if (sids.get(key) === undefined) {
+        publicRooms.push(key);
+      }
+    });
+
+    // Send client list of rooms
+    done(publicRooms);
+  });
+
   // Chat: Nickname
   socket.on('nickname', (nickname, done) => {
     socket['nickname'] = nickname;

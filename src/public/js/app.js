@@ -41,6 +41,17 @@ nicknameForm.addEventListener('submit', (submitEvent) => {
     document.querySelector('body header h4').innerText = `Hello ${nickname}`;
   });
   input.value = '';
+
+  // Show the opened room list
+  socket.emit('list-rooms', (publicRooms) => {
+    // Display the room list
+    const joinRoomList = joinRoomBox.querySelector('#opened-room-list ul');
+    publicRooms.forEach((roomName) => {
+      const li = document.createElement('li');
+      li.innerText = roomName;
+      joinRoomList.appendChild(li);
+    });
+  });
 });
 
 // EventListener for joining new room

@@ -44,6 +44,15 @@ At the end of the course, I am expected to build both front-end and back-end of 
     - No need to stringify object to generate string.
     - Able to pass as many arguments as we want when we emit a message
       - Able to trigger a functions on front-end (provided as the last argument while emit a message) from back-end (also able to pass arguments)
+  - [**Adapter**](https://socket.io/docs/v4/adapter/) is syncronizing the real-time applications among different servers.
+    - By default, Socket.IO uses In-Memory adapter.
+      When server restarts, all room, message, and socket disappear.
+    - Using clustered servers, they cannot share the same memory pool; therefore, to access to other connections in different server, we need to use other adapter rather than In-Memory.
+    - Contain information about who is connected and how many rooms are created.
+- [**Map**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map): Holds key-value pairs and remember the insertion orders.
+  Any value (either objects or primitive values) can be used as either key or a value
+  - Iterating Map gives (value, map, key) pair. (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach)
+- [**Set**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set): store **unique** values of any type.
 
 ## Project
 
@@ -58,11 +67,15 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
   - Sending/Receiving Texts
   - Chat room (Groups of WebSockets)
   - Set nickname
+  - Show the list of rooms in the application
+    - Should eliminate the "private" rooms, having same name with the socketID (listed in `sids` Map), from the `rooms` Map.
+  - Show how many people in the room
 
 **What I added/modified**
 
 - Chat
   - Set nickname before user enter the room
+  - Show the existing room list when users choose which room to enter
 
 |             ![]()              |
 | :----------------------------: |
