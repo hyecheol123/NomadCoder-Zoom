@@ -62,7 +62,7 @@ At the end of the course, I am expected to build both front-end and back-end of 
 ### Open Chats
 
 Followed the lecture contents to build Open Chats.  
-Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and CSS/vanilla-JS.
+Used NodeJS, ~~Websockets~~, SocketIO, Pug (Template Engine), and CSS/vanilla-JS.
 
 **Feature List (From Lecture)**
 
