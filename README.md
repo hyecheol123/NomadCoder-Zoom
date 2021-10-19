@@ -88,6 +88,7 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
   - Change nickname
     - Need to exit the room to change the nickname
   - Host Admin Panel on local server
+    - Instruction & Code repo: https://github.com/socketio/socket.io-admin-ui#client-side
 
 |             ![]()              |
 | :----------------------------: |
