@@ -59,10 +59,10 @@ At the end of the course, I am expected to build both front-end and back-end of 
 
 ## Project
 
-### Zoom Clone
+### Open Chats
 
-Followed the lecture contents to build Clone of Zoom.  
-Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/CSS/vanilla-JS.
+Followed the lecture contents to build Open Chats.  
+Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and CSS/vanilla-JS.
 
 **Feature List (From Lecture)**
 
@@ -90,8 +90,8 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
   - Host Admin Panel on local server
     - Instruction & Code repo: https://github.com/socketio/socket.io-admin-ui#client-side
 
-|             ![]()              |
-| :----------------------------: |
-| _Demo Image of Zoom Clone App_ |
+|           ![]()            |
+| :------------------------: |
+| _Demo Image of Open Chats_ |
 
 Code Link: https://github.com/hyecheol123/NomadCoder-Zoom

@@ -1,4 +1,3 @@
 {
-  "exec": "babel-node src/server.js",
-  "ignore": ["src/public/*", "admin-panel/*"]
+  "ignore": ["open-chats/public/*", "admin-panel/*"]
 }

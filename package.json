@@ -12,8 +12,8 @@
     "url": "https://github.com/hyecheol123/NomadCoder-Zoom/issues"
   },
   "scripts": {
-    "start": "babel-node src/server.js",
-    "dev": "nodemon -L",
+    "start:open-chats": "babel-node open-chats/server.js",
+    "dev:open-chats": "nodemon --exec babel-node open-chats/server.js -L",
     "lint": "prettier --check \"src/**/*.js\" && eslint \"src/**/*.js\"",
     "lint:fix": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\""
   },
