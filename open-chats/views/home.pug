@@ -3,33 +3,34 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css")
+    link(rel="stylesheet", href="public/css/style.css")
     script(src="/socket.io/socket.io.js")
-    title Zoom Clone 
+    title Open Chat
   body 
-    header 
-      h1 Zoom Clone
-      h4
     main
-      div#nickname
+      div.header#toolbox
+        div#exit-room
+          <i class="fas fa-arrow-alt-circle-left"></i>
+        div#logout
+          <i class="fas fa-door-open"></i>
+      div.view#login
+        h3 Enter Your Nickname
         form
           input(placeholder="nickname", required, type="text")
-          button Save
-      div#join-room
+          button Login
+      div.view#join-room
         div#opened-room-list
           h3 Opened Room List
-          ul
+          select(size='10')
         form#enter-room
           // Join room when the room exists, otherwise create and join
           input(placeholder="room name", required, type="text")
-          button Enter Room
-        form#change-nickname
-          button Change Nickname
-      div#chatroom
-        h3
-        ul
+          button Enter
+      div.view#chatroom
+        h3#room-name
+        ul#chat-list
         form#message
           input(placeholder="message", required, type="text")
           button Send
-        form#exit
-          button Exit Room
     script(async src="public/js/app.js")
