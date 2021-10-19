@@ -1,5 +1,7 @@
+import path from 'path';
 import http from 'http';
-import SocketIO from 'socket.io';
+import { Server } from 'socket.io';
+import { instrument } from '@socket.io/admin-ui';
 import express from 'express';
 
 const app = express();
@@ -8,8 +10,9 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views/');
 
-// Static files are served at /public path
-app.use('/public', express.static(__dirname + '/public'));
+// Static files are served at /public path & ../admin-panel path
+app.use('/public', express.static(path.join(__dirname, '/public')));
+app.use('/admin-panel', express.static(path.join(__dirname, '../admin-panel')));
 
 // Landing page
 app.get('/', (_, res) => {
@@ -17,14 +20,18 @@ app.get('/', (_, res) => {
 });
 
 // Redirect other urls to home
-app.get('/*', (_, res) => {
+app.use((_, res) => {
   res.redirect('/');
 });
 
 // Setup Server
 const httpServer = http.createServer(app);
 // eslint-disable-next-line new-cap
-const socketIOServer = SocketIO(httpServer);
+const socketIOServer = new Server(httpServer);
+// Setup Admin Panel
+instrument(socketIOServer, {
+  auth: false,
+});
 
 /**
  * Helper method to count user in the room

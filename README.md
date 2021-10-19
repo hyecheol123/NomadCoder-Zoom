@@ -73,6 +73,7 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
   - Show the list of rooms in the application
     - Should eliminate the "private" rooms, having same name with the socketID (listed in `sids` Map), from the `rooms` Map.
   - Show how many people in the room
+  - Admin Panel to monitor sockets, and rooms.
 
 **What I added/modified**
 
@@ -86,6 +87,7 @@ Used NodeJS, WebRTC, ~~Websockets~~, SocketIO, Pug (Template Engine), and HTML/C
   - Exit the room to join another room
   - Change nickname
     - Need to exit the room to change the nickname
+  - Host Admin Panel on local server
 
 |             ![]()              |
 | :----------------------------: |
