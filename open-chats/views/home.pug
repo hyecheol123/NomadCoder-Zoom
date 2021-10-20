@@ -15,10 +15,13 @@ html(lang="en")
         div#logout
           <i class="fas fa-door-open"></i>
       div.view#login
-        h3 Enter Your Nickname
-        form
-          input(placeholder="nickname", required, type="text")
-          button Login
+        div#greeting
+          h1 Welcome to Open Chat
+          h3 Enter Your Nickname
+        div.input
+          form
+            input(placeholder="nickname", required, type="text")
+            button Login
       div.view#join-room
         div#opened-room-list
           h3 Opened Room List
