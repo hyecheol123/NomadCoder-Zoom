@@ -39,8 +39,13 @@ main {
   height: 100%;
 }
 
-.view div {
+.view div:first-child {
   padding: 5px;
+}
+
+#join-room #opened-room-list select {
+  min-width: 30%;
+  max-width: 100%;
 }
 
 .input {
@@ -58,6 +63,7 @@ main {
   flex-grow: 1;
   border: 0;
   border-top: 1px solid black;
+  padding: 5px;
 }
 
 .input form button {
@@ -70,6 +76,6 @@ main {
 
 /* Test */
 #login,
-#chatroom {
+#join-room {
   display: none;
 }

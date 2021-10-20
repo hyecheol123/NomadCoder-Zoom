@@ -24,12 +24,14 @@ html(lang="en")
             button Login
       div.view#join-room
         div#opened-room-list
+          h1 Choose a Room to Enter
           h3 Opened Room List
-          select(size='10')
-        form#enter-room
-          // Join room when the room exists, otherwise create and join
-          input(placeholder="room name", required, type="text")
-          button Enter
+          select(size='15')
+        div.input
+          form
+            // Join room when the room exists, otherwise create and join
+            input(placeholder="room name", required, type="text")
+            button Enter
       div.view#chatroom
         h3#room-name
         ul#chat-list
