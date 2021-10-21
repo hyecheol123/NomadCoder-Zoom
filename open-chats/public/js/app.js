@@ -152,6 +152,26 @@ nicknameForm.addEventListener('submit', (submitEvent) => {
   });
 });
 
+// EventListener: Join Room View - Opened Room Option
+openedRoomOption.addEventListener('change', (changeEvent) => {
+  // Write value of selected option to join room form
+  joinRoomForm.querySelector('input').value = openedRoomOption.value;
+});
+// EventListener: Join Room View - joinRoomForm
+joinRoomForm.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  // Create/Enter the room
+  const input = joinRoomForm.querySelector('input').value;
+  socket.emit('enter-room', input, (joinedRoomName, userCount) => {
+    currentRoomName = joinedRoomName; // save the room name
+
+    // Display chatroom view
+    chatroomTitle.innerText = `Room: ${currentRoomName} (${userCount})`;
+    displayChatroomView();
+  });
+});
+
 // Show login view at the beginning
 displayLoginView();
 
@@ -166,33 +186,6 @@ displayLoginView();
 //   li.innerText = msg;
 //   chatList.appendChild(li);
 // }
-
-// // EventListener for joining new room
-// joinRoomForm.addEventListener('submit', (submitEvent) => {
-//   submitEvent.preventDefault();
-//   // no need to get public rooms list more
-//   clearInterval(intervalDisplayPublicRooms);
-
-//   // Create/Enter the room
-//   const joinRoomFormInput = joinRoomForm.querySelector('input');
-//   socket.emit(
-//     'enter-room',
-//     joinRoomFormInput.value,
-//     (joinedRoomName, userCount) => {
-//       currentRoomName = joinedRoomName; // Save the room name
-//       currentUserCount = userCount;
-
-//       // Display: Show the chatRoomBox
-//       nicknameBox.hidden = true;
-//       joinRoomBox.hidden = true;
-//       chatRoomBox.hidden = false;
-//       chatRoomBox.querySelector(
-//         'h3'
-//       ).innerText = `Room: ${currentRoomName} (${userCount})`;
-//     }
-//   );
-//   joinRoomFormInput.value = '';
-// });
 
 // // EventListener for sending new message
 // chatRoomForm.addEventListener('submit', (submitEvent) => {
