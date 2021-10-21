@@ -64,7 +64,7 @@ At the end of the course, I am expected to build both front-end and back-end of 
 Followed the lecture contents to build Open Chats.  
 Used NodeJS, ~~Websockets~~, SocketIO, Pug (Template Engine), and CSS/vanilla-JS.
 
-Have simplified designs
+Have simplified designs (Only works on desktop / design for mobile site is neither implemented nor tested)
 
 **Feature List (From Lecture)**
 

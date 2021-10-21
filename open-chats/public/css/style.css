@@ -44,6 +44,58 @@ main {
   max-width: 100%;
 }
 
+#chatroom #chatroom-content #room-name {
+  margin: 0;
+}
+
+#chatroom #chatroom-content #chat-list {
+  height: 430px;
+  border: 1px solid black;
+}
+
+#chatroom #chatroom-content #chat-list ul {
+  height: 430px;
+  overflow: hidden;
+  overflow-y: scroll;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+#chatroom #chatroom-content #chat-list ul .chat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 2px;
+}
+
+#chatroom #chatroom-content #chat-list ul .chat div {
+  padding: 0;
+}
+
+#chatroom #chatroom-content #chat-list ul .chat .chat-content {
+  display: flex;
+}
+
+#chatroom #chatroom-content #chat-list ul .chat .chat-content .chat-user {
+  padding-right: 3px;
+}
+
+#chatroom #chatroom-content #chat-list ul .chat .chat-content .chat-text {
+  flex-grow: 1;
+}
+
+#chatroom #chatroom-content #chat-list ul .chat .chat-timestamp {
+  flex-basis: 100px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: gray;
+}
+
 .input {
   width: 100%;
   height: 100px;
