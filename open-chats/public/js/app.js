@@ -15,6 +15,7 @@ const chatForm = chatroomView.querySelector('.input form');
 let currentRoomName; // chat room name
 let currentPublicRooms = []; // place to store current public room list
 let intervalUpdatePublicRoomList; // interval to call displayPublicRoom() every 3 seconds.
+let userNickname; // nickname of user
 
 // Will use same doemain (window.location) address to establish connection
 const socket = io();
@@ -137,27 +138,22 @@ headerLogoutBtn.addEventListener('click', () => {
   displayLoginView();
 });
 
+// EventListener: Login View - nicknameForm
+nicknameForm.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  // set nickname
+  const nickname = nicknameForm.querySelector('input').value;
+  socket.emit('nickname', nickname, (setNickname) => {
+    userNickname = setNickname;
+
+    // Display join-room view
+    displayJoinRoomView();
+  });
+});
+
 // Show login view at the beginning
 displayLoginView();
-
-// // EventListener for setting nickname
-// nicknameForm.addEventListener('submit', (submitEvent) => {
-//   submitEvent.preventDefault();
-
-//   // Set nickname
-//   const input = nicknameForm.querySelector('input');
-//   socket.emit('nickname', input.value, (nickname) => {
-//     // Display: Show joinRoomBox
-//     nicknameBox.hidden = true;
-//     joinRoomBox.hidden = false;
-//     chatRoomBox.hidden = true;
-//     document.querySelector('body header h4').innerText = `Hello ${nickname}`;
-//   });
-
-//   // Show the opened room list
-//   displayPublicRooms(); // at t = 0
-//   intervalDisplayPublicRooms = setInterval(displayPublicRooms, 3000); // at t = 3n
-// });
 
 // /**
 //  * Helper method to add message to the chatList
