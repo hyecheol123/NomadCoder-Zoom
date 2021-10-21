@@ -26,7 +26,7 @@ html(lang="en")
         div#opened-room-list
           h1 Choose a Room to Enter
           h3 Opened Room List
-          select(size='20')
+          select(name='public-rooms', size='20')
         div.input
           form
             // Join room when the room exists, otherwise create and join
@@ -34,7 +34,7 @@ html(lang="en")
             button Enter
       div.view#chatroom
         div#chatroom-content
-          h2#room-name asd
+          h2#room-name Room: (0)
           div#chat-list
             ul
               //- <!-- Sample data -->
