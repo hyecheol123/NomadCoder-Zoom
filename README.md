@@ -80,17 +80,19 @@ Have simplified designs (Only works on desktop / design for mobile site is neith
 **What I added/modified**
 
 - Chat
-  - Set nickname before user enter the room
+  - Set nickname (Max length of 10) before user enter the room
+  - Room name cannot exceed 20 characters
   - Show the existing room list when users choose which room to enter
-  - Does not implement left/join alarm
-    - In lecture, the application sending the list of all rooms when users join/left the room, but I believe there is a better way and timing to get the list of rooms.
-      (e.g. When user exit from current room to join another)
-    - To update the current opened room list, it will automatically pull the room list every 3 seconds before the user enters the room.
+  - update the current opened room list every 3 seconds before the user enters the room.
   - Exit the room to join another room
-  - Change nickname
+  - Change nickname (logout)
     - Need to exit the room to change the nickname
+  - Show when message sent
   - Host Admin Panel on local server
     - Instruction & Code repo: https://github.com/socketio/socket.io-admin-ui#client-side
+- Add simple design
+  - Change chat message form's input to textarea to automatically wrap long messages.
+  - When `enter` pressed inside the text area, the message will send.
 
 |           ![]()            |
 | :------------------------: |
