@@ -98,6 +98,9 @@ function addMessage(sender, msg, timestampString) {
 
   // Add to chatList
   chatList.appendChild(li);
+
+  // Scroll to bottom
+  chatList.scrollTop = chatList.scrollHeight;
 }
 
 /**
@@ -115,6 +118,9 @@ function addAdminMessage(msg) {
 
   // Add to chatList
   chatList.appendChild(li);
+
+  // Scroll to bottom
+  chatList.scrollTop = chatList.scrollHeight;
 }
 
 /**
@@ -178,7 +184,7 @@ headerExitRoomBtn.addEventListener('click', () => {
     chatList.innerHTML = '';
 
     // Clear previously entered message
-    chatForm.querySelector('input').value = '';
+    chatForm.querySelector('textarea').value = '';
 
     // Show join-room view
     displayJoinRoomView();
@@ -193,7 +199,7 @@ headerLogoutBtn.addEventListener('click', () => {
     chatList.innerHTML = '';
 
     // Clear previously entered message
-    chatForm.querySelector('input').value = '';
+    chatForm.querySelector('textarea').value = '';
 
     // Clear room selection
     joinRoomForm.querySelector('input').value = '';
@@ -240,12 +246,20 @@ joinRoomForm.addEventListener('submit', (submitEvent) => {
   });
 });
 
+// EventListener to send form when enter pressed in the textarea
+chatForm.querySelector('textarea').addEventListener('keydown', (event) => {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    chatForm.querySelector('button').click();
+  }
+});
+
 // EventListener for sending new message
 chatForm.addEventListener('submit', (submitEvent) => {
   submitEvent.preventDefault();
 
   // Send new message
-  const input = chatForm.querySelector('input');
+  const input = chatForm.querySelector('textarea');
   const value = input.value;
   socket.emit('new-message', value, currentRoomName, () => {
     addMessage(`${userNickname} (you)`, value, new Date().toISOString());

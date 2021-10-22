@@ -17,20 +17,21 @@ html(lang="en")
       div.view#login
         div#greeting
           h1 Welcome to Open Chat
-          h3 Enter Your Nickname
+          h3 Enter Your Nickname (Max 10 characters)
         div.input
           form
-            input(placeholder="nickname", required, type="text")
+            input(placeholder="nickname", required, maxlength='10', type="text")
             button Login
       div.view#join-room
         div#opened-room-list
           h1 Choose a Room to Enter
+          h4 If you want to create new room, just type new room name (Max 20 characters).
           h3 Opened Room List
-          select(name='public-rooms', size='20')
+          select(name='public-rooms', size='15')
         div.input
           form
             // Join room when the room exists, otherwise create and join
-            input(placeholder="room name", required, type="text")
+            input(placeholder="room name", required, maxlength='20', type="text")
             button Enter
       div.view#chatroom
         div#chatroom-content
@@ -54,6 +55,6 @@ html(lang="en")
               //-     span 10/25/2022 22:50
         div.input
           form
-            input(placeholder="message", required, type="text")
+            textarea(placeholder="message", required)
             button Send
     script(async src="public/js/app.js")

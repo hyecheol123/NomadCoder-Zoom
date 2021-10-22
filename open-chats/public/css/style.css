@@ -4,6 +4,7 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  font-family: sans-serif;
 }
 
 main {
@@ -83,7 +84,9 @@ main {
 }
 
 #chatroom #chatroom-content #chat-list ul .chat .chat-content .chat-user {
+  flex-basis: 100%;
   padding-right: 3px;
+  white-space: nowrap;
 }
 
 #chatroom #chatroom-content #chat-list ul .chat .chat-content .chat-text {
@@ -115,7 +118,8 @@ main {
   display: flex;
 }
 
-.input form input {
+.input form input,
+.input form textarea {
   flex-grow: 1;
   border: 0;
   border-top: 1px solid black;
