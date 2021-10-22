@@ -116,8 +116,10 @@ socketIOServer.on('connection', (socket) => {
   // Chat: New Message
   socket.on('new-message', (msg, roomName, done) => {
     // Send the message to the chat room members
-    // Send sender, message, and timestamp
-    socket.to(roomName).emit('new-message', socket.nickname, msg, new Date());
+    // Send sender, message, and timestamp (ISO String)
+    socket
+      .to(roomName)
+      .emit('new-message', socket.nickname, msg, new Date().toISOString());
     done();
   });
 });

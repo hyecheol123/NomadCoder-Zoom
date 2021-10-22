@@ -62,9 +62,9 @@ function updatePublicRoomList() {
  *
  * @param {string} sender sender of message
  * @param {string} msg message content
- * @param {Date} timestamp Date object indicates when message received
+ * @param {string} timestampString Date object indicates when message received
  */
-function addMessage(sender, msg, timestamp) {
+function addMessage(sender, msg, timestampString) {
   // div.chat-content
   const chatContent = document.createElement('div');
   chatContent.classList.add('chat-content');
@@ -84,6 +84,7 @@ function addMessage(sender, msg, timestamp) {
   chatTimestamp.classList.add('chat-timestamp');
   // Timestamp
   const chatTimestampSpan = document.createElement('span');
+  const timestamp = new Date(timestampString);
   const dateString = timestamp.toLocaleDateString();
   const timeString = timestamp.toTimeString().split(' ')[0].substring(0, 5);
   chatTimestampSpan.innerText = `${dateString} ${timeString}`;
@@ -239,18 +240,18 @@ joinRoomForm.addEventListener('submit', (submitEvent) => {
   });
 });
 
-// // EventListener for sending new message
-// chatRoomForm.addEventListener('submit', (submitEvent) => {
-//   submitEvent.preventDefault();
+// EventListener for sending new message
+chatForm.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
 
-//   // Send new message
-//   const input = chatRoomForm.querySelector('input');
-//   const value = input.value;
-//   socket.emit('new-message', value, currentRoomName, () => {
-//     addMessage(`You: ${value}`);
-//   });
-//   input.value = '';
-// });
+  // Send new message
+  const input = chatForm.querySelector('input');
+  const value = input.value;
+  socket.emit('new-message', value, currentRoomName, () => {
+    addMessage(`${userNickname} (you)`, value, new Date().toISOString());
+  });
+  input.value = '';
+});
 
 // SocketIO: Receive welcome message (Someone Joined room)
 socket.on('join', (user, userCount) => {
