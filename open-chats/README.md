@@ -34,9 +34,17 @@ Have simplified designs (Only works on desktop / design for mobile site is neith
   - Change chat message form's input to textarea to automatically wrap long messages.
   - When `enter` pressed inside the text area, the message will send.
 
-|           ![]()            |
-| :------------------------: |
-| _Demo Image of Open Chats_ |
+| ![](https://raw.githubusercontent.com/hyecheol123/NomadCoder-Zoom/main/img/open-chats/loginView.png) |
+| :--------------------------------------------------------------------------------------------------: |
+|                                _Demo Image of Open Chats: loginView_                                 |
+
+| ![](https://raw.githubusercontent.com/hyecheol123/NomadCoder-Zoom/main/img/open-chats/joinRoomView.png) |
+| :-----------------------------------------------------------------------------------------------------: |
+|                                _Demo Image of Open Chats: joinRoomView_                                 |
+
+| ![](https://raw.githubusercontent.com/hyecheol123/NomadCoder-Zoom/main/img/open-chats/chatroomView.png) |
+| :-----------------------------------------------------------------------------------------------------: |
+|                                _Demo Image of Open Chats: chatroomView_                                 |
 
 Code Link: https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/open-chats  
 Demo Link: https://demo1.hcjang.com/open-chats/
