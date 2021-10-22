@@ -3,6 +3,12 @@ const myFace = document.getElementById('myFace');
 const muteBtn = document.getElementById('mute');
 const cameraBtn = document.getElementById('camera');
 const cameraSelect = document.getElementById('cameras');
+const welcomeView = document.getElementById('welcome');
+const welcomeForm = welcomeView.querySelector('form');
+const callView = document.getElementById('call');
+
+// Display
+callView.hidden = true;
 
 // Will use same doemain (window.location) address to establish connection
 const socket = io.connect(window.location.host, {
@@ -12,6 +18,7 @@ const socket = io.connect(window.location.host, {
 let myStream;
 let muted = false;
 let cameraOff = false;
+let roomName;
 
 async function getCameras() {
   try {
@@ -52,8 +59,6 @@ async function getMedia(deviceId = undefined) {
   }
 }
 
-getMedia();
-
 muteBtn.addEventListener('click', () => {
   myStream.getAudioTracks().forEach((track) => {
     track.enabled = !track.enabled;
@@ -82,4 +87,21 @@ cameraBtn.addEventListener('click', () => {
 
 cameraSelect.addEventListener('input', async () => {
   await getMedia(cameraSelect.value);
+});
+
+welcomeForm.addEventListener('submit', (submitEvent) => {
+  submitEvent.preventDefault();
+
+  const input = welcomeForm.querySelector('input');
+  socket.emit('join-room', input.value, () => {
+    welcomeView.hidden = true;
+    callView.hidden = false;
+    getMedia();
+  });
+  roomName = input.value;
+  input.value = '';
+});
+
+socket.on('welcome', () => {
+  console.log('someone joined');
 });

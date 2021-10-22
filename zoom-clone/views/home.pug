@@ -9,9 +9,14 @@ html(lang="en")
     title Open Chat
   body 
     main
-      div#myStream
-        video#myFace(autoPlay, playsinline, width="400", height="400")
-        button#mute Mute
-        button#camera Turn Camera Off
-        select#cameras
+      div#welcome
+        form
+          input(placeholder="room name", required, type="text")
+          button Enter Room
+      div#call
+        div#myStream
+          video#myFace(autoPlay, playsinline, width="400", height="400")
+          button#mute Mute
+          button#camera Turn Camera Off
+          select#cameras
     script(async src="public/js/app.js")

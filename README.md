@@ -91,6 +91,8 @@ Used NodeJS, express, SocketIO, WebRTC, Pub (Template Engine), and CSS/vanilla-J
 
 **Feature List (From Lecture)**
 
+- Private Video Call Rooms (SocketIO)
+
 **What I added/modified**
 
 |           ![]()            |

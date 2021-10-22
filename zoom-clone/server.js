@@ -27,6 +27,14 @@ const httpServer = http.createServer(app);
 // eslint-disable-next-line new-cap
 const socketIOServer = new Server(httpServer);
 
+socketIOServer.on('connection', (socket) => {
+  socket.on('join-room', (roomName, done) => {
+    socket.join(roomName);
+    done();
+    socket.to(roomName).emit('welcome');
+  });
+});
+
 httpServer.listen(3001, () => {
   console.log('Listening on http://localhost:3001');
 });
