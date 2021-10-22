@@ -27,8 +27,9 @@ Have simplified designs (Only works on desktop / design for mobile site is neith
   - Change nickname (logout)
     - Need to exit the room to change the nickname
   - Show when message sent
-  - Host Admin Panel on local server
-    - Instruction & Code repo: https://github.com/socketio/socket.io-admin-ui#client-side
+  - ~~Host Admin Panel on local server~~
+    - ~~Instruction & Code repo: https://github.com/socketio/socket.io-admin-ui#client-side~~
+  - Remove admin panel due to security issue.
 - Add simple design
   - Change chat message form's input to textarea to automatically wrap long messages.
   - When `enter` pressed inside the text area, the message will send.

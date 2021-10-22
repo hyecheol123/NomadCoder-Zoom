@@ -84,7 +84,7 @@ main {
 }
 
 #chatroom #chatroom-content #chat-list ul .chat .chat-content .chat-user {
-  flex-basis: 100%;
+  max-width: 200px;
   padding-right: 3px;
   white-space: nowrap;
 }

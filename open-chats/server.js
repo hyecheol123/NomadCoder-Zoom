@@ -1,7 +1,6 @@
 import path from 'path';
 import http from 'http';
 import { Server } from 'socket.io';
-import { instrument } from '@socket.io/admin-ui';
 import express from 'express';
 
 const app = express();
@@ -12,7 +11,6 @@ app.set('views', __dirname + '/views/');
 
 // Static files are served at /public path & ../admin-panel path
 app.use('/public', express.static(path.join(__dirname, '/public')));
-app.use('/admin-panel', express.static(path.join(__dirname, '../admin-panel')));
 
 // Landing page
 app.get('/', (_, res) => {
@@ -28,10 +26,6 @@ app.use((_, res) => {
 const httpServer = http.createServer(app);
 // eslint-disable-next-line new-cap
 const socketIOServer = new Server(httpServer);
-// Setup Admin Panel
-instrument(socketIOServer, {
-  auth: false,
-});
 
 /**
  * Helper method to count user in the room
