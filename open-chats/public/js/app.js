@@ -58,6 +58,65 @@ function updatePublicRoomList() {
 }
 
 /**
+ * Helper method to add message to the chatList
+ *
+ * @param {string} sender sender of message
+ * @param {string} msg message content
+ * @param {Date} timestamp Date object indicates when message received
+ */
+function addMessage(sender, msg, timestamp) {
+  // div.chat-content
+  const chatContent = document.createElement('div');
+  chatContent.classList.add('chat-content');
+  // Sender
+  const chatUser = document.createElement('span');
+  chatUser.classList.add('chat-user');
+  chatUser.innerText = `${sender}:`;
+  chatContent.appendChild(chatUser);
+  // Message
+  const chatText = document.createElement('span');
+  chatText.classList.add('chat-text');
+  chatText.innerText = msg;
+  chatContent.appendChild(chatText);
+
+  // div.chat-timestamp
+  const chatTimestamp = document.createElement('div');
+  chatTimestamp.classList.add('chat-timestamp');
+  // Timestamp
+  const chatTimestampSpan = document.createElement('span');
+  const dateString = timestamp.toLocaleDateString();
+  const timeString = timestamp.toTimeString().split(' ')[0].substring(0, 5);
+  chatTimestampSpan.innerText = `${dateString} ${timeString}`;
+  chatTimestamp.appendChild(chatTimestampSpan);
+
+  // li.chat
+  const li = document.createElement('li');
+  li.classList.add('chat');
+  li.appendChild(chatContent);
+  li.appendChild(chatTimestamp);
+
+  // Add to chatList
+  chatList.appendChild(li);
+}
+
+/**
+ * Helper method to add admin message to the chatList (leave/join chatroom)
+ *
+ * @param {string} msg admin message
+ */
+function addAdminMessage(msg) {
+  // li.admin-message
+  const li = document.createElement('li');
+  li.classList.add('admin-message');
+  const span = document.createElement('span');
+  span.innerText = msg;
+  li.appendChild(span);
+
+  // Add to chatList
+  chatList.appendChild(li);
+}
+
+/**
  * Dispaly login view
  */
 function displayLoginView() {
@@ -127,15 +186,23 @@ headerExitRoomBtn.addEventListener('click', () => {
 // Logout button (reset nickname)
 headerLogoutBtn.addEventListener('click', () => {
   // Leave currently joined chatroom
-  currentRoomName = '';
-  chatroomTitle.innerText = '';
-  chatList.innerHTML = '';
+  socket.emit('leave-room', currentRoomName, () => {
+    currentRoomName = '';
+    chatroomTitle.innerText = '';
+    chatList.innerHTML = '';
 
-  // Clear nickname
-  nicknameForm.querySelector('input').value = '';
+    // Clear previously entered message
+    chatForm.querySelector('input').value = '';
 
-  // show login view
-  displayLoginView();
+    // Clear room selection
+    joinRoomForm.querySelector('input').value = '';
+
+    // Clear nickname
+    nicknameForm.querySelector('input').value = '';
+
+    // show login view
+    displayLoginView();
+  });
 });
 
 // EventListener: Login View - nicknameForm
@@ -172,21 +239,6 @@ joinRoomForm.addEventListener('submit', (submitEvent) => {
   });
 });
 
-// Show login view at the beginning
-displayLoginView();
-
-// /**
-//  * Helper method to add message to the chatList
-//  *
-//  * @param {string} msg message to add on the chatList
-//  */
-// function addMessage(msg) {
-//   const chatList = chatRoomBox.querySelector('ul');
-//   const li = document.createElement('li');
-//   li.innerText = msg;
-//   chatList.appendChild(li);
-// }
-
 // // EventListener for sending new message
 // chatRoomForm.addEventListener('submit', (submitEvent) => {
 //   submitEvent.preventDefault();
@@ -200,23 +252,28 @@ displayLoginView();
 //   input.value = '';
 // });
 
-// // Receive welcome message (Someone Joined room)
-// socket.on('join', (user, userCount) => {
-//   addMessage(`${user} joined`);
-//   chatRoomBox.querySelector(
-//     'h3'
-//   ).innerText = `Room: ${currentRoomName} (${userCount})`;
-// });
+// SocketIO: Receive welcome message (Someone Joined room)
+socket.on('join', (user, userCount) => {
+  // Notify user join
+  addAdminMessage(`${user} joined`);
 
-// // Received bye message (Someone left the room)
-// socket.on('bye', (user, userCount) => {
-//   addMessage(`${user} left`);
-//   chatRoomBox.querySelector(
-//     'h3'
-//   ).innerText = `Room: ${currentRoomName} (${userCount})`;
-// });
+  // Change room title to indicate the correct user count
+  chatroomTitle.innerText = `Room: ${currentRoomName} (${userCount})`;
+});
 
-// // Received new message
-// socket.on('new-message', (msg) => {
-//   addMessage(msg);
-// });
+// SocketIO: Received bye message (Someone left the room)
+socket.on('bye', (user, userCount) => {
+  // Notify user left
+  addAdminMessage(`${user} left`);
+
+  // Change chatroom title to indicate the correct user count
+  chatroomTitle.innerText = `Room: ${currentRoomName} (${userCount})`;
+});
+
+// Received new message
+socket.on('new-message', (sender, msg, timestamp) => {
+  addMessage(sender, msg, timestamp);
+});
+
+// Show login view at the beginning
+displayLoginView();

@@ -64,11 +64,14 @@ main {
   justify-content: flex-start;
 }
 
+#chatroom #chatroom-content #chat-list ul li {
+  margin-top: 2px;
+}
+
 #chatroom #chatroom-content #chat-list ul .chat {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-top: 2px;
 }
 
 #chatroom #chatroom-content #chat-list ul .chat div {
@@ -94,6 +97,11 @@ main {
   font-size: 0.8rem;
   font-style: italic;
   color: gray;
+}
+
+#chatroom #chatroom-content #chat-list ul .admin-message {
+  text-align: center;
+  color: red;
 }
 
 .input {
