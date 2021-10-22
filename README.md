@@ -56,6 +56,22 @@ At the end of the course, I am expected to build both front-end and back-end of 
 - [**Set**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set): store **unique** values of any type.
 - [**Optional chaining (?.)**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) is used to read value in the object, but check whether the reference is nullish or not.
   If nullish (`null` or `undefined`), the expression with return `undefined`.
+- [**video element**](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Video) is used to show live video retrieved from camera.
+  - [**HTMLMediaElement.srcObject**](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject) indicates the MediaStream/MediaSource/File that the HTMLMediaElement currently showing.
+  - [**navigator.mediaDevices.getUserMedia()**](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) is used to retrive list of available media input/stream (webcam, etc.).
+    - Can put **constraint** as a argument (which media is required).
+      - To select specific camera, put deviceId of the camera to the constraint.
+  - [**MediaStream.getTracks()**](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getTracks#browser_compatibility) is used to retrieve all MediaStreamTrack of the MediaStream.
+    To only retrieve MediaStreamTrack representing audio, you can call [**MediaStream.getAudioTracks()**](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getAudioTracks).
+    To only retrieve MediaStreamTrack representing video, you can call [**MediaStream.getVideoTracks()**](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getVideoTracks).
+  - [**MediaDevices.enumerateDevices()**](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices) is used to retrieve a list of available media input and output devices.
+- [**WebRTC** (Web Real-Time Communication)](https://webrtc.org/) enables users to stream video, voice, and generic data between peers.
+  - When I build [chat application](https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/open-chats) using Socket.IO, many webSockets are connected to one server.
+    When message sent, the message goes to server; then server pass the messaage to everyone.
+    It is not a peer-to-peer application.
+  - Using webRTC, the data are not sent to server.
+    The data send directly to the other user.
+    - Server exists only to signal each peers to establish connections.
 
 ## Project
 
@@ -67,3 +83,18 @@ Used NodeJS, ~~Websockets~~, SocketIO, Pug (Template Engine), and CSS/vanilla-JS
 Have simplified designs (Only works on desktop / design for mobile site is neither implemented nor tested)
 
 Detailed information can be found here: https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/open-chats
+
+### Zoom Clone
+
+Followed the lecture contents to build Zoom Clone.
+Used NodeJS, express, SocketIO, WebRTC, Pub (Template Engine), and CSS/vanilla-JS.
+
+**Feature List (From Lecture)**
+
+**What I added/modified**
+
+|           ![]()            |
+| :------------------------: |
+| _Demo Image of Zoom Clone_ |
+
+Code Link: https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/zoom-clone
