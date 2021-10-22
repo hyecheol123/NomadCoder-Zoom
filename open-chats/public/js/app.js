@@ -18,7 +18,9 @@ let intervalUpdatePublicRoomList; // interval to call displayPublicRoom() every 
 let userNickname; // nickname of user
 
 // Will use same doemain (window.location) address to establish connection
-const socket = io();
+const socket = io.connect(window.location.host, {
+  path: `${window.location.pathname}socket.io`,
+});
 
 /**
  * Helper method to display the list of public rooms
