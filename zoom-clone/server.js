@@ -40,6 +40,10 @@ socketIOServer.on('connection', (socket) => {
   socket.on('answer', (roomName, webRTCAnswer) => {
     socket.to(roomName).emit('answer', webRTCAnswer);
   });
+
+  socket.on('ice-candidate', (roomName, iceCandidate) => {
+    socket.to(roomName).emit('ice-candidate', iceCandidate);
+  });
 });
 
 httpServer.listen(3001, () => {

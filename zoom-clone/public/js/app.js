@@ -16,10 +16,11 @@ const socket = io.connect(window.location.host, {
 });
 
 let myStream;
+let myPeerConnection;
+let myDataChannel;
 let muted = false;
 let cameraOff = false;
 let roomName;
-let myPeerConnection;
 
 async function getCameras() {
   try {
@@ -61,7 +62,30 @@ async function getMedia(deviceId = undefined) {
 }
 
 function makeConnection() {
-  myPeerConnection = new RTCPeerConnection();
+  myPeerConnection = new RTCPeerConnection({
+    iceServers: [
+      {
+        urls: [
+          'stun:stun1.l.google.com:19302',
+          'stun:stun2.l.google.com:19302',
+          'stun:stun3.l.google.com:19302',
+          'stun:stun4.l.google.com:19302',
+          'stun:stun.nextcloud.com:443',
+        ],
+      },
+    ],
+  });
+  myPeerConnection.addEventListener('icecandidate', (iceCandidateEvent) => {
+    socket.emit('ice-candidate', roomName, iceCandidateEvent.candidate);
+  });
+  myPeerConnection.addEventListener('addstream', (addstreamEvent) => {
+    const peerStream = document.getElementById('peerStream');
+    peerStream.srcObject = addstreamEvent.stream;
+  });
+  // myPeerConnection.addEventListener('track', (trackEvent) => {
+  //   const peerStream = document.getElementById('peerStream');
+  //   peerStream.srcObject = trackEvent.streams[0];
+  // });
   myStream.getTracks().forEach((track) => {
     myPeerConnection.addTrack(track, myStream);
   });
@@ -95,6 +119,13 @@ cameraBtn.addEventListener('click', () => {
 
 cameraSelect.addEventListener('input', async () => {
   await getMedia(cameraSelect.value);
+  if (myPeerConnection) {
+    const videoTrack = myStream.getVideoTracks()[0];
+    const videoSender = myPeerConnection
+      .getSenders()
+      .find((sender) => sender.track.kind === 'video');
+    videoSender.replaceTrack(videoTrack);
+  }
 });
 
 welcomeForm.addEventListener('submit', async (submitEvent) => {
@@ -114,6 +145,10 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
 });
 
 socket.on('welcome', async () => {
+  myDataChannel = myPeerConnection.createDataChannel('chat');
+  myDataChannel.addEventListener('message', (messageEvent) => {
+    console.log(messageEvent);
+  });
   // After join, send WebRTC Offer
   const webRTCOffer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(webRTCOffer);
@@ -121,6 +156,12 @@ socket.on('welcome', async () => {
 });
 
 socket.on('offer', async (webRTCOffer) => {
+  myPeerConnection.addEventListener('datachannel', (dataChannelEvent) => {
+    myDataChannel = dataChannelEvent.channel;
+    myDataChannel.addEventListener('message', (message) => {
+      console.log(message);
+    });
+  });
   myPeerConnection.setRemoteDescription(webRTCOffer);
   const webRTCAnswer = await myPeerConnection.createAnswer();
   myPeerConnection.setLocalDescription(webRTCAnswer);
@@ -129,4 +170,8 @@ socket.on('offer', async (webRTCOffer) => {
 
 socket.on('answer', (webRTCAnswer) => {
   myPeerConnection.setRemoteDescription(webRTCAnswer);
+});
+
+socket.on('ice-candidate', (iceCandidate) => {
+  myPeerConnection.addIceCandidate(iceCandidate);
 });

@@ -90,6 +90,28 @@ At the end of the course, I am expected to build both front-end and back-end of 
         It can be done by using [**RTCPeerConnection.createAnswer()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer).
         - The `answer` becomes local description of remote end's connection.
         - The sent `answer` should be the remote description of the other end's connection.
+  - [**RTCIceCandidate**] indicates the candidate Interactive Connectivity Establishment (ICE) configuration which may be used to establish the `RTCPeerConnection`.
+    - An ICE candidate describes the protocols and routing needs for WebRTC to be able to communicate with a remote device.
+    - When starting a WebRTC connection, various candidates are proposed by each end; then, one best specification is selected to commuicate with each other.
+    - [**RTCPeerConnection.icecandidate event**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/icecandidate_event) occurs when an `RTCIceCandidate` is added to the local peer (by calling `RTCPeerConnection.setLocalDescription()`).
+      - The event handler of this eent should transmit the `RTCICECandidate` to the remote peer.
+      - When the remote end receives the candidates, it needs to add the candidates to the connection by using [**RTCPeerConnection.addIceCandidate()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addIceCandidate)
+  - After sharing `RTCIceCandidate`, both ends need to handle [**RTCPeerConnection.addstream**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addstream_event) event.
+    - Note that `RTCPeerConnection.addstream` event is depreciated.
+      We need to use [**RTCPeerConnection.track** event](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/track_event) instread.
+    - It contains information of `MediaStream` from remote end.
+  - Use [**RTCPeerConnection.getSenders()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/getSenders) to retrieve the list of `RTCRtpSender`, representing the RTP senders transmitting the track's media.
+    - [**RTCRtpSender**](https://developer.mozilla.org/en-US/docs/Web/API/RTCRtpSender) allow developers to control the `MediaStreamTrack` sent to peer.
+    - Use [**RTCRtpSender.replaceTrack()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCRtpSender/replaceTrack) to replace track currently being used as the sender's source.
+- Use [localtunnel](https://theboroer.github.io/localtunnel-www/) to test/expose the localhost to the public.
+- STUN (Session Traversal Utilities for NAT) server helps clients find the public IP address behind a firewall.
+  - Add list of STUN servers that the application will use while creating the `RTCPeerConnection`.
+- Data Channel can be created by using [**RTCPeerConnection.createDataChannel()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createDataChannel).
+  - When the `RTCDataChannel` receives a message from the remote peer, the [**RTCDataChannel: message event**](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/message_event) occurs.
+  - Only one peer, the origin, needs to create the data channel.
+    The other peer only needs the event handler to handle the message event.
+    - The [**RTCPeerConnection: datachannel event**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/datachannel_event) is created when `RTCDataChannel` is added to the connection.
+  - To send the message to the peer, use [**RTCDataChannel.send()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/send).
 
 ## Project
 
@@ -111,9 +133,19 @@ Used NodeJS, express, SocketIO, WebRTC, Pub (Template Engine), and CSS/vanilla-J
 
 - Create Private Video Call Rooms (SocketIO)
 - Establish WebRTC Connection between peers to stream video/audio/text
-  - Use SocketIO for signaling
+  - Use SocketIO for signaling server
+  - Offer/Answer/IceCandidate/AddStream
+- Change Camera
+- Add list of STUN servers
 
 **What I added/modified**
+
+- WebRTC: Use `track` event instead of `addstream` event
+  - `addstream` event depreciated.
+- TODO: Fix selecting camera
+  - Smartphone may have more than one main cameras.
+- TODO: Remove stream when a peer leaves the room.
+- TODO: Design for both mobile and desktop website.
 
 |           ![]()            |
 | :------------------------: |
