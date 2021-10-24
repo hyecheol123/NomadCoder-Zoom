@@ -28,10 +28,17 @@ const httpServer = http.createServer(app);
 const socketIOServer = new Server(httpServer);
 
 socketIOServer.on('connection', (socket) => {
-  socket.on('join-room', (roomName, done) => {
+  socket.on('join-room', (roomName) => {
     socket.join(roomName);
-    done();
     socket.to(roomName).emit('welcome');
+  });
+
+  socket.on('offer', (roomName, webRTCOffer) => {
+    socket.to(roomName).emit('offer', webRTCOffer);
+  });
+
+  socket.on('answer', (roomName, webRTCAnswer) => {
+    socket.to(roomName).emit('answer', webRTCAnswer);
   });
 });
 

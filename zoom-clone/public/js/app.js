@@ -19,6 +19,7 @@ let myStream;
 let muted = false;
 let cameraOff = false;
 let roomName;
+let myPeerConnection;
 
 async function getCameras() {
   try {
@@ -59,6 +60,13 @@ async function getMedia(deviceId = undefined) {
   }
 }
 
+function makeConnection() {
+  myPeerConnection = new RTCPeerConnection();
+  myStream.getTracks().forEach((track) => {
+    myPeerConnection.addTrack(track, myStream);
+  });
+}
+
 muteBtn.addEventListener('click', () => {
   myStream.getAudioTracks().forEach((track) => {
     track.enabled = !track.enabled;
@@ -89,19 +97,36 @@ cameraSelect.addEventListener('input', async () => {
   await getMedia(cameraSelect.value);
 });
 
-welcomeForm.addEventListener('submit', (submitEvent) => {
+welcomeForm.addEventListener('submit', async (submitEvent) => {
   submitEvent.preventDefault();
 
   const input = welcomeForm.querySelector('input');
-  socket.emit('join-room', input.value, () => {
-    welcomeView.hidden = true;
-    callView.hidden = false;
-    getMedia();
-  });
+
+  // Init call
+  welcomeView.hidden = true;
+  callView.hidden = false;
+  await getMedia();
+  makeConnection(); // create webRTC Connection before joining the room
+
+  socket.emit('join-room', input.value);
   roomName = input.value;
   input.value = '';
 });
 
-socket.on('welcome', () => {
-  console.log('someone joined');
+socket.on('welcome', async () => {
+  // After join, send WebRTC Offer
+  const webRTCOffer = await myPeerConnection.createOffer();
+  myPeerConnection.setLocalDescription(webRTCOffer);
+  socket.emit('offer', roomName, webRTCOffer);
+});
+
+socket.on('offer', async (webRTCOffer) => {
+  myPeerConnection.setRemoteDescription(webRTCOffer);
+  const webRTCAnswer = await myPeerConnection.createAnswer();
+  myPeerConnection.setLocalDescription(webRTCAnswer);
+  socket.emit('answer', roomName, webRTCAnswer);
+});
+
+socket.on('answer', (webRTCAnswer) => {
+  myPeerConnection.setRemoteDescription(webRTCAnswer);
 });

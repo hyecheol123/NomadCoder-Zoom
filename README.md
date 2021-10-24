@@ -72,6 +72,24 @@ At the end of the course, I am expected to build both front-end and back-end of 
   - Using webRTC, the data are not sent to server.
     The data send directly to the other user.
     - Server exists only to signal each peers to establish connections.
+  - Connection Establish/Exchange Diagram: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity
+    - Diagram for setup the connections: https://stackoverflow.com/questions/47125535/offer-answer-from-same-device-ios-in-webrtc
+  - Use [**RTCPeerConnection**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection) to prepare establishing a WebRTC connection between the local and remote computers.
+    - Use[**RTCPeerConnection.addTrack()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTrack) to add new media track to the set of tracks which will be transmitted to the connected peer.
+      - Need to specify `MediaStreamTrack` representing the media track to add to the peer connection.
+        Also, the function get optinoal argument of `MediaStream` indicates where the track should be added.
+        It provides a convenient way to group tracks together on receiving end of the connection.
+    - Once new user joined (Previous user gets notification), the existing users need to send **offer** to new user in order to start a new WebRTC connection to a remoe user.
+      - `offer` can be created by using [**RTCPeerConnection.createOffer()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createOffer).
+      - [**RTCPeerConnection.setLocalDescription()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setLocalDescription) is used to change the local description associated with the connection, which specifies the properties (including media format) of the local end of connection.
+      - The created `offer` can sent to the remote end using SocketIO.
+    - Once the remote end receives the `offer`, it need to reply an **answer** to the origin.
+      - The remote end needs to set the remote description using the `offer` received.
+        It can be done by using [**RTCPeerConnecion.setRemoteDescription()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setRemoteDescription).
+      - After set the remote description to the connection, the remote end should create and send an `answer`.
+        It can be done by using [**RTCPeerConnection.createAnswer()**](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer).
+        - The `answer` becomes local description of remote end's connection.
+        - The sent `answer` should be the remote description of the other end's connection.
 
 ## Project
 
@@ -91,7 +109,9 @@ Used NodeJS, express, SocketIO, WebRTC, Pub (Template Engine), and CSS/vanilla-J
 
 **Feature List (From Lecture)**
 
-- Private Video Call Rooms (SocketIO)
+- Create Private Video Call Rooms (SocketIO)
+- Establish WebRTC Connection between peers to stream video/audio/text
+  - Use SocketIO for signaling
 
 **What I added/modified**
 
