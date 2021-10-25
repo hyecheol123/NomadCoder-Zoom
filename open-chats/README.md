@@ -1,4 +1,4 @@
-# Simple Chats
+# Simple Open Chats
 
 Followed the lecture contents to build Open Chats.  
 Used NodeJS, ~~Websockets~~, SocketIO, Pug (Template Engine), and CSS/vanilla-JS.
