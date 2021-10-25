@@ -175,6 +175,27 @@ function displayChatroomView() {
   headerLogoutBtn.style.visibility = 'visible';
 }
 
+/**
+ * Logout from current session
+ */
+function logoutHelper() {
+  currentRoomName = '';
+  chatroomTitle.innerText = '';
+  chatList.innerHTML = '';
+
+  // Clear previously entered message
+  chatForm.querySelector('textarea').value = '';
+
+  // Clear room selection
+  joinRoomForm.querySelector('input').value = '';
+
+  // Clear nickname
+  nicknameForm.querySelector('input').value = '';
+
+  // show login view
+  displayLoginView();
+}
+
 // Header button's EventListener
 // Exit room button
 headerExitRoomBtn.addEventListener('click', () => {
@@ -196,21 +217,7 @@ headerExitRoomBtn.addEventListener('click', () => {
 headerLogoutBtn.addEventListener('click', () => {
   // Leave currently joined chatroom
   socket.emit('leave-room', currentRoomName, () => {
-    currentRoomName = '';
-    chatroomTitle.innerText = '';
-    chatList.innerHTML = '';
-
-    // Clear previously entered message
-    chatForm.querySelector('textarea').value = '';
-
-    // Clear room selection
-    joinRoomForm.querySelector('input').value = '';
-
-    // Clear nickname
-    nicknameForm.querySelector('input').value = '';
-
-    // show login view
-    displayLoginView();
+    logoutHelper();
   });
 });
 
@@ -287,9 +294,14 @@ socket.on('bye', (user, userCount) => {
   chatroomTitle.innerText = `Room: ${currentRoomName} (${userCount})`;
 });
 
-// Received new message
+// SocketIO: Received new message
 socket.on('new-message', (sender, msg, timestamp) => {
   addMessage(sender, msg, timestamp);
+});
+
+// SocketIO: When disconnected, return to login page
+socket.on('disconnect', () => {
+  logoutHelper();
 });
 
 // Show login view at the beginning
