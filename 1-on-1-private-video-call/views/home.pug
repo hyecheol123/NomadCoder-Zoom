@@ -6,18 +6,46 @@ html(lang="en")
     //- link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css")
     link(rel="stylesheet", href="public/css/style.css")
     script(src="socket.io/socket.io.js")
-    title Open Chat
+    title 1-on-1 Private Video Call
   body 
     main
       div#welcome
         form
-          input(placeholder="room name", required, type="text")
-          button Enter Room
+          input#nickname(placeholder="nickname", required, type="text")
+          input#room-name(placeholder="room name", required, type="text")
+          button
       div#call
-        div#myStream
-          video#myFace(autoPlay, playsinline, width="400", height="400")
-          button#mute Mute
-          button#camera Turn Camera Off
-          select#cameras
-        video#peerStream(autoPlay, playsinline, width="400", height="400")
+        div#confirm-join.modal.hidden
+          div.modal-bg
+          div.modal-box
+            span#modal-title
+            span Want to approve the user to join the chat?
+            button#approve Approve 
+            button#decline Decline
+        div#wait-approval.modal.hidden
+          div.modal-bg
+          div.modal-box
+            span Waiting for approval 
+        div#declined-request.modal.hidden
+          div.modal-bg
+          div.modal-box
+            span#decline-message 
+            button#main-menu Go Back
+        div#call-content
+          div#myStream
+            video#myVideo(autoPlay, playsinline, width="400", height="400")
+            button#mute Mute
+            button#camera Turn Camera Off
+            select#cameras
+          div#peerStream
+            video#peerVideo(autoPlay, playsinline, width="400", height="400")
+          div#control
+            button#hang-up Hang up
+        div#disconnected-peer.modal.hidden
+          div.modal-bg
+          div.modal-box
+            span Remote peer disconnected.
+            span Do you want to leave the room or wait for the other peer to join?
+            button#leave-room Leave room
+            button#stay-room Stay
     script(async src="public/js/app.js")
