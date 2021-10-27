@@ -10,27 +10,23 @@ html(lang="en")
   body 
     main
       div#welcome
+        h1 1:1 Private Video Call
+        h3 Enter nickname and room name to start 
         form
-          input#nickname(placeholder="nickname", required, type="text")
-          input#room-name(placeholder="room name", required, type="text")
-          button
-        div#wait-approval.modal.hidden
-          div.modal-bg
-          div.modal-box
-            span Waiting for approval 
-        div#declined-request.modal.hidden
-          div.modal-bg
-          div.modal-box
-            span#decline-message 
+          div 
+            span Nickname: 
+            input#nickname(placeholder="nickname", required, type="text", maxlength='15')
+          div
+            span Room:
+            input#room-name(placeholder="room name", required, type="text")
+          button Join Room
+        div.modal-overlay
+          div#wait-approval.modal
+            span Waiting for approval
+          div#declined-request.modal
+            span#decline-message
             button#main-menu Go Back
       div#call
-        div#confirm-join.modal.hidden
-          div.modal-bg
-          div.modal-box
-            span#modal-title
-            span Want to approve the user to join the chat?
-            button#approve Approve
-            button#decline Decline
         div#call-content
           div#myStream
             video#myVideo(autoPlay, playsinline, width="400", height="400")
@@ -41,9 +37,13 @@ html(lang="en")
             video#peerVideo(autoPlay, playsinline, width="400", height="400")
           div#control
             button#hang-up Hang up
-        div#disconnected-peer.modal.hidden
-          div.modal-bg
-          div.modal-box
+        div.modal-overlay
+          div#confirm-join.modal
+            span#modal-title
+            span Want to approve the user to join the chat?
+            button#approve Approve
+            button#decline Decline
+          div#disconnected-peer.modal
             span Remote peer disconnected.
             span Do you want to leave the room or wait for the other peer to join?
             button#leave-room Leave room
