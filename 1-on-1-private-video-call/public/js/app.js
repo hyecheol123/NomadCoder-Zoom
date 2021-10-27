@@ -5,6 +5,8 @@ const callView = document.getElementById('call');
 const callContent = document.getElementById('call-content');
 const cameraSelect = callContent.querySelector('#myStream #camera-selection');
 const myVideo = callContent.querySelector('#myStream #myVideo');
+const cameraBtn = callContent.querySelector('#myStream button#camera');
+const muteBtn = callContent.querySelector('#myStream button#mute');
 
 // Constant: List of STUN Servers
 const STUN_SERVER_LIST = [
@@ -18,6 +20,9 @@ const STUN_SERVER_LIST = [
 // Global variables
 let myStream;
 let myPeerConnection;
+let currentRoomName;
+let muted = false;
+let cameraOff = false;
 
 // Will use same domain (window.location) address to establish connection
 const socket = io.connect(window.location.host, {
@@ -132,15 +137,26 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
   const nickname = welcomeForm.querySelector('#nickname').value;
   const roomName = welcomeForm.querySelector('#room-name').value;
 
-  // Init call
-  await camStart();
-  makeConnection(); // create webRTC Connection before joining the room
-
   // Signaling Server
-  socket.emit('join-room', nickname, roomName);
-
-  // Display
-  displayCall();
+  socket.emit('join-room', nickname, roomName, async (status) => {
+    switch (status) {
+      case 'created-room':
+        // New room created
+        currentRoomName = roomName;
+        // Init call
+        await camStart();
+        makeConnection(); // create webRTC Connection
+        // Display
+        displayCall();
+        break;
+      case 'wait-approval':
+        // TODO: display message
+        break;
+      case 'exceed-max-capacity':
+        // TODO: display message
+        break;
+    }
+  });
 });
 
 // EventListener (cameraSelect):
@@ -159,47 +175,35 @@ cameraSelect.addEventListener('change', async () => {
   }
 });
 
+// EventListener (muteBtn): mute/unmute the recording audio
+muteBtn.addEventListener('click', () => {
+  myStream.getAudioTracks().forEach((track) => {
+    track.enabled = !track.enabled;
+  });
+  if (!muted) {
+    muted = true;
+    muteBtn.innerText = 'Unmute';
+  } else {
+    muted = false;
+    muteBtn.innerText = 'Mute';
+  }
+});
+
+// EventListener (cameraBtn): Turn on/off camera
+cameraBtn.addEventListener('click', () => {
+  myStream.getVideoTracks().forEach((track) => {
+    track.enabled = !track.enabled;
+  });
+  if (cameraOff) {
+    cameraOff = false;
+    cameraBtn.innerText = 'Turn Camera Off';
+  } else {
+    cameraOff = true;
+    cameraBtn.innerText = 'Turn Camera On';
+  }
+});
+
 // let myDataChannel;
-// let muted = false;
-// let cameraOff = false;
-// let roomName;
-
-// muteBtn.addEventListener('click', () => {
-//   myStream.getAudioTracks().forEach((track) => {
-//     track.enabled = !track.enabled;
-//   });
-//   if (!muted) {
-//     muted = true;
-//     muteBtn.innerText = 'Unmute';
-//   } else {
-//     muted = false;
-//     muteBtn.innerText = 'Mute';
-//   }
-// });
-
-// cameraBtn.addEventListener('click', () => {
-//   myStream.getVideoTracks().forEach((track) => {
-//     track.enabled = !track.enabled;
-//   });
-//   if (cameraOff) {
-//     cameraOff = false;
-//     cameraBtn.innerText = 'Turn Camera Off';
-//   } else {
-//     cameraOff = true;
-//     cameraBtn.innerText = 'Turn Camera On';
-//   }
-// });
-
-// cameraSelect.addEventListener('input', async () => {
-//   await getMedia(cameraSelect.value);
-//   if (myPeerConnection) {
-//     const videoTrack = myStream.getVideoTracks()[0];
-//     const videoSender = myPeerConnection
-//       .getSenders()
-//       .find((sender) => sender.track.kind === 'video');
-//     videoSender.replaceTrack(videoTrack);
-//   }
-// });
 
 // socket.on('welcome', async () => {
 //   myDataChannel = myPeerConnection.createDataChannel('chat');
