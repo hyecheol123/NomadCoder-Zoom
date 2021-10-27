@@ -14,8 +14,8 @@
   "scripts": {
     "start:open-chats": "babel-node open-chats/server.js",
     "dev:open-chats": "nodemon --exec babel-node open-chats/server.js -L",
-    "start:zoom-clone": "babel-node zoom-clone/server.js",
-    "dev:zoom-clone": "nodemon --exec babel-node zoom-clone/server.js -L",
+    "start:private-call": "babel-node 1-on-1-private-video-call/server.js",
+    "dev:private-call": "nodemon --exec babel-node 1-on-1-private-video-call/server.js -L",
     "lint": "prettier --check \"src/**/*.js\" && eslint \"src/**/*.js\"",
     "lint:fix": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\""
   },
