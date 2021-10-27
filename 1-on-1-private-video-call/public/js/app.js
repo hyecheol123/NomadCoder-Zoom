@@ -93,13 +93,15 @@ function makeConnection() {
     iceServers: [{ urls: STUN_SERVER_LIST }],
   });
 
-  // EventListner: iceCandidateEvent --> Receive iceCandidateEvent
+  // EventListner (myPeerConnection):
+  //   iceCandidateEvent --> Receive iceCandidateEvent
   // The iceCandiate information needs to be transferred to the remote peer
   myPeerConnection.addEventListener('icecandidate', (iceCandidateEvent) => {
     socket.emit('ice-candidate', roomName, iceCandidateEvent.candidate);
   });
 
-  // // EventListener: addStream --> RTCPeerConnection get new MediaStream object
+  // // EventListener (myPeerConnection):
+  // //   addStream --> RTCPeerConnection get new MediaStream object
   // // Display the new media stream as the peer's video
   // // This event has been depreciated
   // myPeerConnection.addEventListener('addstream', (addstreamEvent) => {
@@ -107,7 +109,8 @@ function makeConnection() {
   //   peerStream.srcObject = addstreamEvent.stream;
   // });
 
-  // EventListener: trackEvent --> RTCPeerConnection get new Track
+  // EventListener (myPeerConnection):
+  //   trackEvent --> RTCPeerConnection get new Track
   // Display new video track as the peer's video
   myPeerConnection.addEventListener('track', (trackEvent) => {
     const peerStream = document.getElementById('peerStream');
@@ -121,7 +124,7 @@ function makeConnection() {
   });
 }
 
-// EventListener: Process user's request to join the room
+// EventListener (WelcomeForm): Process user's request to join the room
 welcomeForm.addEventListener('submit', async (submitEvent) => {
   submitEvent.preventDefault();
 
@@ -138,6 +141,22 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
 
   // Display
   displayCall();
+});
+
+// EventListener (cameraSelect):
+//   When camera changes, changing both video's source
+cameraSelect.addEventListener('change', async () => {
+  // Restart/Create new camera video
+  await camStart();
+
+  // Change video tracks for the peer connection
+  if (myPeerConnection) {
+    const videoTrack = myStream.getVideoTracks()[0];
+    const videoSender = myPeerConnection
+      .getSenders()
+      .find((sender) => sender.track.kind === 'video');
+    videoSender.replaceTrack(videoTrack);
+  }
 });
 
 // let myDataChannel;
