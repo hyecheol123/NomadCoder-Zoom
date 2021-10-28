@@ -11,7 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  max-width: 30rem;
+  max-width: 50rem;
   border: 2px solid black;
   border-radius: 10px;
   padding: 1rem;
@@ -29,11 +29,14 @@ h3 {
 #welcome h1 {
   font-size: 7vw;
   margin-bottom: 1rem;
+  white-space: nowrap;
+  text-align: center;
 }
 #welcome h3 {
   font-size: 4.8vw;
   font-weight: 500;
   margin-bottom: 1rem;
+  white-space: nowrap;
 }
 /* Change greeting font-size dynamically */
 @media screen and (min-width: 360px) {
@@ -68,7 +71,7 @@ h3 {
   border: 2px solid black;
   border-radius: 10px;
   padding: 0.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.2rem;
   background-color: rgb(231, 231, 231);
 }
 
@@ -99,9 +102,29 @@ h3 {
   flex-shrink: 0;
   align-self: center;
   margin-top: 0.2rem;
-  border: 1px solid black;
+  border: 1px solid rgb(76, 60, 177);
+  border-radius: 5px;
   background-color: slateblue;
   font-weight: 700;
+  font-size: 0.85rem;
   color: white;
   height: 1.5rem;
+}
+
+#welcome .alert {
+  align-self: center;
+  background-color: rgb(255, 138, 101);
+  height: 1.5rem;
+  width: 100%;
+  text-align: center;
+  border: 1px solid rgb(240, 111, 71);
+  border-radius: 5px;
+  display: none;
+}
+
+#welcome .alert span {
+  height: 1.5rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
 }

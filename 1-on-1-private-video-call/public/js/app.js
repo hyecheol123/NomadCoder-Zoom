@@ -23,9 +23,13 @@ let myPeerConnection;
 let currentRoomName;
 let muted = false;
 let cameraOff = false;
+const waitApprovalObj = {
+  interval: null,
+  counter: 0,
+};
 
 // Will use same domain (window.location) address to establish connection
-const socket = io.connect(window.location.host, {
+let socket = io.connect(window.location.host, {
   path: `${window.location.pathname}socket.io`,
 });
 
@@ -133,6 +137,14 @@ function makeConnection() {
 welcomeForm.addEventListener('submit', async (submitEvent) => {
   submitEvent.preventDefault();
 
+  // HTML Alert Element
+  const waitAlert = welcomeView.querySelector('#wait-approval');
+  const declineRequestAlert = welcomeView.querySelector('#declined-request');
+
+  // Hide alerts
+  waitAlert.style.display = 'none';
+  declineRequestAlert.style.display = 'none';
+
   // User Inputs
   const nickname = welcomeForm.querySelector('#nickname').value;
   const roomName = welcomeForm.querySelector('#room-name').value;
@@ -150,7 +162,41 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
         displayCall();
         break;
       case 'wait-approval':
-        // TODO: display message
+        // disable form
+        const formElements = welcomeForm.elements;
+        for (let index = 0; index < formElements.length; index++) {
+          formElements[index].disabled = true;
+        }
+
+        // display message (Count 30 second)
+        waitAlert.style.display = 'block';
+        waitApprovalObj.counter = 30;
+        waitApprovalObj.interval = setInterval(() => {
+          // Display Message
+          const alertMsg = waitAlert.querySelector('span');
+          alertMsg.innerText = `Waiting for Approval (${waitApprovalObj.counter})`;
+
+          if (waitApprovalObj.counter !== 0) {
+            // Reduce counter by 1
+            --waitApprovalObj.counter;
+          } else {
+            // Timeout (30 second passed)
+            clearInterval(waitApprovalObj.interval);
+
+            // Generate new socketIO socket (disconnect from previous)
+            socket.disconnect();
+            socket = io.connect(window.location.host, {
+              path: `${window.location.pathname}socket.io`,
+            });
+            // Enable form
+            for (let index = 0; index < formElements.length; index++) {
+              formElements[index].disabled = false;
+            }
+
+            // Display Retry message
+            alertMsg.innerText = `Not Approved Yet! Try Again!`;
+          }
+        }, 1000);
         break;
       case 'exceed-max-capacity':
         // TODO: display message
