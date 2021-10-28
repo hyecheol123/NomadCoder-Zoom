@@ -65,17 +65,43 @@ socketIOServer.on('connection', (socket) => {
     }
   });
 
+  // 'approve-peer': when the room owner approved the peer
+  //   Should join the request user to the room
+  //   and send notification ('approved')
+  socket.on('approve-peer', (roomName, socketId) => {
+    // Join user with socketId to the room
+    socketIOServer.in(socketId).socketsJoin(roomName);
+    // Notify the user that the request has been approved
+    socketIOServer.in(socketId).emit('approved');
+  });
+
+  // TODO: decline-peer
+
+  // 'hello': When a remote peer successfully joined the room
+  //   Should send notification to the room owner so that it can start
+  //   the webRTC connection ('welcome')
+  socket.on('hello', (roomName) => {
+    socket.to(roomName).emit('welcome');
+  });
+
+  // 'offer': When webRTC offer sent from the room owner
+  //   Should relay the offer to the remote peer ('offer')
   socket.on('offer', (roomName, webRTCOffer) => {
     socket.to(roomName).emit('offer', webRTCOffer);
   });
 
+  // 'answer': When WebRTC answer sent from the remote peer.
+  //   Should relay the answer to the room owner ('answer')
   socket.on('answer', (roomName, webRTCAnswer) => {
     socket.to(roomName).emit('answer', webRTCAnswer);
   });
 
+  // 'ice-candidate': Both party should share ice-candidate information
   socket.on('ice-candidate', (roomName, iceCandidate) => {
     socket.to(roomName).emit('ice-candidate', iceCandidate);
   });
+
+  // TODO: disconnecting --> signal to the remote peer
 });
 
 httpServer.listen(3001, () => {

@@ -128,3 +128,8 @@ h3 {
   font-size: 0.85rem;
   color: white;
 }
+
+#call #modal-overlay,
+.modal {
+  display: none;
+}
