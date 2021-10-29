@@ -19,11 +19,11 @@ Only the participants share the contents; server only used to create connections
 
 - WebRTC: Use `track` event instead of `addstream` event
   - `addstream` event depreciated.
-- TODO: Fix selecting camera
+- Fix selecting camera
   - Smartphone may have more than one main cameras.
   - Reference: https://github.com/webrtc/samples/blob/gh-pages/src/content/devices/input-output/js/main.js
-- TODO: Set Nickname before establish connection.
-- TODO: Ask room owners whether to allow joining the new member or not upon connection.
+- Set Nickname before establish connection.
+- Ask room owners whether to allow joining the new member or not upon connection.
   - When the room owner decline the request, the other user should return to the main screen after warning.
 - TODO: When one user exit, the other user is asked to leave or wait for other participants.
 - TODO: Remove stream when a peer leaves the room.

@@ -27,6 +27,11 @@ let myNickname;
 let peerNickname;
 let muted = false;
 let cameraOff = false;
+// Contain information for the joining room request
+const waitApprovalObj = {
+  interval: null,
+  counter: 0,
+};
 
 // Will use same domain (window.location) address to establish connection
 let socket = io.connect(window.location.host, {
@@ -160,12 +165,6 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
         displayCall();
         break;
       case 'wait-approval':
-        // Contain information for the approval request
-        const waitApprovalObj = {
-          interval: null,
-          counter: 0,
-        };
-
         // disable form
         const formElements = welcomeForm.elements;
         for (let index = 0; index < formElements.length; index++) {
@@ -256,11 +255,7 @@ cameraBtn.addEventListener('click', () => {
 // SocketIO: "join-room" event - Another user asks to join currentRoom
 // Current user needs to approve or reject the request within 30 second
 socket.on('join-room', (nickname, socketId) => {
-  // Contain information for the approval request
-  const approvalObj = {
-    interval: null,
-    counter: 0,
-  };
+  // Save peer's nickname
   peerNickname = nickname;
 
   // Display modal (count 30 second)
@@ -268,18 +263,18 @@ socket.on('join-room', (nickname, socketId) => {
   modalWrapper.style.display = 'flex';
   confirmJoinModal.style.display = 'flex';
   confirmJoinModal.querySelector('#request-nickname').innerText = nickname;
-  approvalObj.counter = 30;
-  approvalObj.interval = setInterval(() => {
+  waitApprovalObj.counter = 30;
+  waitApprovalObj.interval = setInterval(() => {
     // Display Message
     const alertMsg = confirmJoinModal.querySelector('#confirm-message');
-    alertMsg.innerText = `Want to approve the user to join the chat? (${approvalObj.counter})`;
+    alertMsg.innerText = `Want to approve the user to join the chat? (${waitApprovalObj.counter})`;
 
-    if (approvalObj.counter !== 0) {
+    if (waitApprovalObj.counter !== 0) {
       // Reduce counter by 1
-      --approvalObj.counter;
+      --waitApprovalObj.counter;
     } else {
       // Timeout (30 second passed)
-      clearInterval(approvalObj.interval);
+      clearInterval(waitApprovalObj.interval);
 
       // Hide Modal
       modalWrapper.style.display = 'none';
@@ -301,7 +296,7 @@ socket.on('join-room', (nickname, socketId) => {
   const declineBtn = confirmJoinModal.querySelector('#decline');
   declineBtn.addEventListener('click', () => {
     // Emit message indicating the peer has been declined
-    socket.emit('decline-peer', roomName, socketId);
+    socket.emit('decline-peer', socketId);
     // Hide Modal
     modalWrapper.style.display = 'none';
     confirmJoinModal.style.display = 'none';
@@ -321,7 +316,21 @@ socket.on('approved', async () => {
   socket.emit('hello', roomName);
 });
 
-// TODO: declined event
+// SocketIO: 'declined' event - When remote peer decline to join the room
+//   Display message and enable form to enter another room name and nickname
+socket.on('declined', () => {
+  // Clear Interval showing wait message
+  clearInterval(waitApprovalObj.interval);
+  // Display message
+  welcomeView.querySelector('#wait-approval #wait-message').innerText =
+    'Declined to join the room!! Try Again!!';
+
+  // Enable form
+  const formElements = welcomeForm.elements;
+  for (let index = 0; index < formElements.length; index++) {
+    formElements[index].disabled = false;
+  }
+});
 
 // SocketIO: 'welcome' event - When remote peer successfully joined the room
 //   Send the webRTC offer to the remote peer

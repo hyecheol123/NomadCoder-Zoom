@@ -75,7 +75,11 @@ socketIOServer.on('connection', (socket) => {
     socketIOServer.in(socketId).emit('approved');
   });
 
-  // TODO: decline-peer
+  // 'decline-peer': when the room owner decline peer joining the room
+  //   Should notify the request user
+  socket.on('decline-peer', (socketId) => {
+    socketIOServer.in(socketId).emit('declined');
+  });
 
   // 'hello': When a remote peer successfully joined the room
   //   Should send notification to the room owner so that it can start
