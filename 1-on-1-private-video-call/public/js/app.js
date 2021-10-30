@@ -202,7 +202,10 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
         }, 1000);
         break;
       case 'exceed-max-capacity':
-        // TODO: display message
+        // display message
+        waitAlert.style.display = 'block';
+        waitAlert.querySelector('span').innerText =
+          'Exceed Max Capacity of Room!! Try Again!';
         break;
     }
   });
