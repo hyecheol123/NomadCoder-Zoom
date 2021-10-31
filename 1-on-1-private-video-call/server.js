@@ -105,6 +105,15 @@ socketIOServer.on('connection', (socket) => {
     socket.to(roomName).emit('ice-candidate', iceCandidate);
   });
 
+  // 'leave-room': When one user left the room
+  socket.on('leave-room', (roomName, done) => {
+    // Notify other peer that current user is leaving the room
+    socket.to(roomName).emit('peer-leaving');
+    // Leave the room
+    socket.leave(roomName);
+    done();
+  });
+
   // TODO: disconnecting --> signal to the remote peer
 });
 

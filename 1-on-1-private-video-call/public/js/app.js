@@ -1,12 +1,16 @@
 // Frequently used HTML Element
 const welcomeView = document.getElementById('welcome');
 const welcomeForm = welcomeView.querySelector('form');
+const welcomeAlert = welcomeView.querySelector('#alert');
+const welcomeAlertMsg = welcomeAlert.querySelector('span');
 const callView = document.getElementById('call');
 const callContent = callView.querySelector('#call-content');
-const cameraSelect = callContent.querySelector('#myStream #camera-selection');
 const myVideo = callContent.querySelector('#myStream #myVideo');
-const cameraBtn = callContent.querySelector('#myStream button#camera');
-const muteBtn = callContent.querySelector('#myStream button#mute');
+const peerVideo = callContent.querySelector('#peerVideo');
+const muteBtn = callContent.querySelector('#control button#mute');
+const cameraSelect = callContent.querySelector('#control #camera-selection');
+const cameraBtn = callContent.querySelector('#control button#camera');
+const hangUpBtn = callContent.querySelector('#control button#hang-up');
 const modalWrapper = callView.querySelector('#modal-overlay');
 
 // Constant: List of STUN Servers
@@ -42,6 +46,18 @@ let socket = io.connect(window.location.host, {
  * Display Main/Welcome view
  */
 function displayMain() {
+  // Reset Main view
+  // Clear Interval
+  clearInterval(waitApprovalObj.interval);
+  // Enable form
+  const formElements = welcomeForm.elements;
+  for (let index = 0; index < formElements.length; index++) {
+    formElements[index].disabled = false;
+  }
+  // Hide Message
+  welcomeAlertMsg.innerText = '';
+  welcomeAlert.style.display = 'none';
+
   welcomeView.style.display = 'flex';
   callView.style.display = 'none';
 }
@@ -119,7 +135,6 @@ function makeConnection() {
   // // Display the new media stream as the peer's video
   // // This event has been depreciated
   // myPeerConnection.addEventListener('addstream', (addstreamEvent) => {
-  //   const peerVideo = document.getElementById('peerVideo');
   //   peerVideo.srcObject = addstreamEvent.stream;
   // });
 
@@ -127,7 +142,6 @@ function makeConnection() {
   //   trackEvent --> RTCPeerConnection get new Track
   // Display new video track as the peer's video
   myPeerConnection.addEventListener('track', (trackEvent) => {
-    const peerVideo = document.getElementById('peerVideo');
     peerVideo.srcObject = trackEvent.streams[0];
   });
 
@@ -138,17 +152,37 @@ function makeConnection() {
   });
 }
 
+/**
+ * Helper function to leave a call
+ */
+function hangUp() {
+  // Disconnect peer connection (WebRTC)
+  myPeerConnection.close();
+  myPeerConnection = null;
+  myDataChannel = null;
+  myNickname = '';
+  peerNickname = '';
+
+  // Stop Video
+  myStream.getTracks().forEach((track) => {
+    // Clearly indicates that the stream no longer uses the source
+    track.stop();
+  });
+  peerVideo.srcObject = null;
+
+  // Leave room and notify to the peer
+  socket.emit('leave-room', roomName, () => {
+    roomName = '';
+    displayMain();
+  });
+}
+
 // EventListener (WelcomeForm): Process user's request to join the room
 welcomeForm.addEventListener('submit', async (submitEvent) => {
   submitEvent.preventDefault();
 
-  // HTML Alert Element
-  const waitAlert = welcomeView.querySelector('#wait-approval');
-  const declineRequestAlert = welcomeView.querySelector('#declined-request');
-
   // Hide alerts
-  waitAlert.style.display = 'none';
-  declineRequestAlert.style.display = 'none';
+  welcomeAlert.style.display = 'none';
 
   // User Inputs
   myNickname = welcomeForm.querySelector('#nickname').value;
@@ -172,12 +206,11 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
         }
 
         // display message (Count 30 second)
-        waitAlert.style.display = 'block';
+        welcomeAlert.style.display = 'block';
         waitApprovalObj.counter = 30;
         waitApprovalObj.interval = setInterval(() => {
           // Display Message
-          const alertMsg = waitAlert.querySelector('span');
-          alertMsg.innerText = `Waiting for Approval (${waitApprovalObj.counter})`;
+          welcomeAlertMsg.innerText = `Waiting for Approval (${waitApprovalObj.counter})`;
 
           if (waitApprovalObj.counter !== 0) {
             // Reduce counter by 1
@@ -197,15 +230,14 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
             }
 
             // Display Retry message
-            alertMsg.innerText = `Not Approved Yet! Try Again!`;
+            welcomeAlertMsg.innerText = `Not Approved Yet! Try Again!`;
           }
         }, 1000);
         break;
       case 'exceed-max-capacity':
         // display message
-        waitAlert.style.display = 'block';
-        waitAlert.querySelector('span').innerText =
-          'Exceed Max Capacity of Room!! Try Again!';
+        welcomeAlert.style.display = 'block';
+        welcomeAlertMsg.innerText = 'Exceed Max Capacity of Room!! Try Again!';
         break;
     }
   });
@@ -255,6 +287,12 @@ cameraBtn.addEventListener('click', () => {
   }
 });
 
+// EventListener (hangUpBtn): Leave Call
+//   Notify the remotePeer('leave-room') and leave call
+hangUpBtn.addEventListener('click', () => {
+  hangUp();
+});
+
 // SocketIO: "join-room" event - Another user asks to join currentRoom
 // Current user needs to approve or reject the request within 30 second
 socket.on('join-room', (nickname, socketId) => {
@@ -269,8 +307,8 @@ socket.on('join-room', (nickname, socketId) => {
   waitApprovalObj.counter = 30;
   waitApprovalObj.interval = setInterval(() => {
     // Display Message
-    const alertMsg = confirmJoinModal.querySelector('#confirm-message');
-    alertMsg.innerText = `Want to approve the user to join the chat? (${waitApprovalObj.counter})`;
+    const modalMsg = confirmJoinModal.querySelector('#confirm-message');
+    modalMsg.innerText = `Want to approve the user to join the chat? (${waitApprovalObj.counter})`;
 
     if (waitApprovalObj.counter !== 0) {
       // Reduce counter by 1
@@ -325,8 +363,7 @@ socket.on('declined', () => {
   // Clear Interval showing wait message
   clearInterval(waitApprovalObj.interval);
   // Display message
-  welcomeView.querySelector('#wait-approval #wait-message').innerText =
-    'Declined to join the room!! Try Again!!';
+  welcomeAlertMsg.innerText = 'Declined to join the room!! Try Again!!';
 
   // Enable form
   const formElements = welcomeForm.elements;
@@ -377,6 +414,41 @@ socket.on('answer', (webRTCAnswer) => {
 //   - Both party should share the ice-candidate information
 socket.on('ice-candidate', (iceCandidate) => {
   myPeerConnection.addIceCandidate(iceCandidate);
+});
+
+// SocketIO: 'peer-leaving' event
+//   - Display modal popup that peer has been left
+socket.on('peer-leaving', () => {
+  // Peer disconnected
+  peerNickname = '';
+  // Remote peerVideo
+  peerVideo.srcObject.getTracks().forEach((track) => {
+    track.stop();
+  });
+  peerVideo.srcObject = null;
+
+  // Display Modal
+  const disconnectedPeer = modalWrapper.querySelector('#disconnected-peer');
+  modalWrapper.style.display = 'flex';
+  disconnectedPeer.style.display = 'flex';
+
+  // Press Leave Room Button
+  const leaveRoomBtn = disconnectedPeer.querySelector('button#leave-room');
+  leaveRoomBtn.addEventListener('click', () => {
+    // Hide Modal
+    modalWrapper.style.display = 'none';
+    disconnectedPeer.style.display = 'none';
+    // Leave Chat Room
+    hangUp();
+  });
+
+  // Press Stay Button
+  const stayRoomBtn = disconnectedPeer.querySelector('button#stay-room');
+  stayRoomBtn.addEventListener('click', () => {
+    // Hide Modal
+    modalWrapper.style.display = 'none';
+    disconnectedPeer.style.display = 'none';
+  });
 });
 
 // Website need to display the main screen at the beginning

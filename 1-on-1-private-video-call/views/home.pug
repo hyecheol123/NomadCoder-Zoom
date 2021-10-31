@@ -20,21 +20,20 @@ html(lang="en")
             span Room:
             input#room-name(placeholder="room name", required, type="text")
           button Join Room
-        div#wait-approval.alert
-          span#wait-message
-        div#declined-request.alert
-          span#decline-message
+        div#alert
+          span#message
       div#call
         div#call-content
           div#myStream
-            video#myVideo(autoPlay, playsinline, width="400", height="400")
-            button#mute Mute
-            button#camera Turn Camera Off
-            select#camera-selection
+            video#myVideo(autoPlay, playsinline, width="400", height="300")
           div#peerStream
-            video#peerVideo(autoPlay, playsinline, width="400", height="400")
+            video#peerVideo(autoPlay, playsinline, width="400", height="300")
           div#control
+            button#mute Mute
+            select#camera-selection
+            button#camera Turn Camera Off
             button#hang-up Hang up
+            button#chat-button Chat
         div#modal-overlay
           div#confirm-join.modal
             span#request-nickname

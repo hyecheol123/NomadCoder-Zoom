@@ -25,8 +25,8 @@ Only the participants share the contents; server only used to create connections
 - Set Nickname before establish connection.
 - Ask room owners whether to allow joining the new member or not upon connection.
   - When the room owner decline the request, the other user should return to the main screen after warning.
-- TODO: When one user exit, the other user is asked to leave or wait for other participants.
-- TODO: Remove stream when a peer leaves the room.
+- When one user exit, the other user is asked to leave or wait for other participants.
+- Remove stream when a peer leaves the room.
 - TODO: P2P chat (Use Datachannel)
 - TODO: Design for both mobile and desktop website.
 

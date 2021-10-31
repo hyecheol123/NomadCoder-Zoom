@@ -111,7 +111,7 @@ h3 {
   height: 1.5rem;
 }
 
-#welcome .alert {
+#welcome #alert {
   align-self: center;
   background-color: rgb(255, 138, 101);
   height: 1.5rem;
@@ -122,7 +122,7 @@ h3 {
   display: none;
 }
 
-#welcome .alert span {
+#welcome #alert span {
   height: 1.5rem;
   font-weight: 700;
   font-size: 0.85rem;
