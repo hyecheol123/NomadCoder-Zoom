@@ -129,6 +129,57 @@ h3 {
   color: white;
 }
 
+#call #call-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+#call #call-content #stream-wrapper {
+  flex-grow: 1;
+  flex-basis: auto;
+  justify-content: center;
+}
+
+#call #call-content #control {
+  display: grid;
+  grid-template-columns: 1fr repeat(3, auto) 1fr;
+  grid-column-gap: 10px;
+  justify-items: center;
+  align-items: center;
+  padding-right: 10px;
+  padding-left: 10px;
+  background: rgb(240, 240, 240);
+  height: 50px;
+}
+
+#call #call-content #control div:first-child {
+  grid-column-start: 2;
+}
+
+#call #call-content #control #chat-button {
+  margin-left: auto;
+}
+
+#call #call-content #control button,
+select {
+  margin: 0;
+  height: 40px;
+}
+
+#call #call-content #control button {
+  width: 40px;
+  border-radius: 50%;
+  background-color: slateblue;
+  border: 0;
+  color: white;
+}
+
+#call #call-content #control #camera-selection {
+  margin-right: 5px;
+}
+
 #call .modal-overlay,
 .modal {
   display: none;

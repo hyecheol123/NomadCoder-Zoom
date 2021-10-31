@@ -24,15 +24,19 @@ html(lang="en")
           span#message
       div#call
         div#call-content
-          div#myStream
-            video#myVideo(autoPlay, playsinline, width="400", height="300")
-          div#peerStream
-            video#peerVideo(autoPlay, playsinline, width="400", height="300")
+          div#stream-wrapper
+            div#myStream
+              video#myVideo(autoPlay, playsinline, width="400", height="300")
+            div#peerStream
+              video#peerVideo(autoPlay, playsinline, width="400", height="300")
           div#control
-            button#mute <i class="fas fa-microphone-slash"></i>
-            select#camera-selection
-            button#camera <i class="fas fa-video-slash"></i>
-            button#hang-up <i class="fas fa-phone-slash"></i>
+            div
+              button#mute <i class="fas fa-microphone-slash"></i>
+            div
+              select#camera-selection
+              button#camera <i class="fas fa-video-slash"></i>
+            div
+              button#hang-up <i class="fas fa-phone-slash"></i>
             button#chat-button <i class="fas fa-comments"></i>
         div#confirm-join-overlay.modal-overlay
           div#confirm-join.modal
