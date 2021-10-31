@@ -151,12 +151,39 @@ h3 {
 }
 
 #call .modal {
-  background: rgba(105, 90, 205, 0.555);
+  background: rgba(144, 130, 235, 0.555);
   box-shadow: 0 8px 32px 0 rgba(131, 131, 131, 0.185);
   backdrop-filter: blur(20px);
   border-radius: 10px;
+  width: 250px;
   border: 1px solid rbga(255, 255, 255, 0.18);
-
   position: relative;
   padding: 10px;
+  flex-direction: column;
+}
+
+#call .modal span,
+button {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+#call .modal span:first-child {
+  font-size: 1rem;
+}
+
+#call .modal button {
+  border: 1px solid rgb(76, 60, 177);
+  border-radius: 5px;
+  background-color: slateblue;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  height: 1.5rem;
+}
+
+#call .modal button#leave-room,
+button#approve {
+  margin-top: 15px;
 }

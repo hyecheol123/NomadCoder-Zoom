@@ -59,12 +59,14 @@ function createNewSocket() {
     const confirmJoinModal = modalWrapper.querySelector('#confirm-join');
     modalWrapper.style.display = 'flex';
     confirmJoinModal.style.display = 'flex';
-    confirmJoinModal.querySelector('#request-nickname').innerText = nickname;
+    confirmJoinModal.querySelector(
+      '#request-nickname'
+    ).innerHTML = `<b>${nickname}</b><br>wants to join the call`;
     waitApprovalObj.counter = 30;
     waitApprovalObj.interval = setInterval(() => {
       // Display Message
       const modalMsg = confirmJoinModal.querySelector('#confirm-message');
-      modalMsg.innerText = `Want to approve the user to join the chat? (${waitApprovalObj.counter})`;
+      modalMsg.innerText = `Will you approve the user to join the chat? (${waitApprovalObj.counter})`;
 
       if (waitApprovalObj.counter !== 0) {
         // Reduce counter by 1
@@ -87,6 +89,7 @@ function createNewSocket() {
       // Hide Modal
       modalWrapper.style.display = 'none';
       confirmJoinModal.style.display = 'none';
+      clearInterval(waitApprovalObj.interval);
     };
 
     // Press Decline
@@ -103,7 +106,6 @@ function createNewSocket() {
   // SocketIO: 'approved' event - When remote peer approved to join the room
   //   Send the room owner a 'hello' message
   newSocket.on('approved', async () => {
-    console.log('reached');
     // Init call
     await camStart();
     makeConnection(); // create webRTC Connection
@@ -344,10 +346,12 @@ function hangUp() {
     track.stop();
   });
   // Stop PeerVideo
-  peerVideo.srcObject.getTracks().forEach((track) => {
-    track.stop();
-  });
-  peerVideo.srcObject = null;
+  if (peerVideo?.srcObject) {
+    peerVideo.srcObject.getTracks().forEach((track) => {
+      track.stop();
+    });
+    peerVideo.srcObject = null;
+  }
 
   // Leave room and notify to the peer
   socket.emit('leave-room', roomName, () => {
