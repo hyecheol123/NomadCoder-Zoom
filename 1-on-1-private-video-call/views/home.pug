@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    //- link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css")
     link(rel="stylesheet", href="public/css/style.css")
     script(src="socket.io/socket.io.js")
     title 1-on-1 Private Video Call
@@ -29,11 +29,11 @@ html(lang="en")
           div#peerStream
             video#peerVideo(autoPlay, playsinline, width="400", height="300")
           div#control
-            button#mute Mute
+            button#mute <i class="fas fa-microphone-slash"></i>
             select#camera-selection
-            button#camera Turn Camera Off
-            button#hang-up Hang up
-            button#chat-button Chat
+            button#camera <i class="fas fa-video-slash"></i>
+            button#hang-up <i class="fas fa-phone-slash"></i>
+            button#chat-button <i class="fas fa-comments"></i>
         div#confirm-join-overlay.modal-overlay
           div#confirm-join.modal
             span#request-nickname

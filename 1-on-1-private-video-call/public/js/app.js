@@ -451,10 +451,10 @@ muteBtn.addEventListener('click', () => {
   });
   if (!muted) {
     muted = true;
-    muteBtn.innerText = 'Unmute';
+    muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
   } else {
     muted = false;
-    muteBtn.innerText = 'Mute';
+    muteBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
   }
 });
 
@@ -465,10 +465,10 @@ cameraBtn.addEventListener('click', () => {
   });
   if (cameraOff) {
     cameraOff = false;
-    cameraBtn.innerText = 'Turn Camera Off';
+    cameraBtn.innerHTML = '<i class="fas fa-video-slash"></i>';
   } else {
     cameraOff = true;
-    cameraBtn.innerText = 'Turn Camera On';
+    cameraBtn.innerHTML = '<i class="fas fa-video"></i>';
   }
 });
 
