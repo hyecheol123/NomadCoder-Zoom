@@ -34,12 +34,13 @@ html(lang="en")
             button#camera Turn Camera Off
             button#hang-up Hang up
             button#chat-button Chat
-        div#modal-overlay
+        div#confirm-join-overlay.modal-overlay
           div#confirm-join.modal
             span#request-nickname
             span#confirm-message
             button#approve Approve
             button#decline Decline
+        div#disconnected-peer-overlay.modal-overlay
           div#disconnected-peer.modal
             span Remote peer disconnected.
             span Do you want to leave the room or wait for the other peer to join?

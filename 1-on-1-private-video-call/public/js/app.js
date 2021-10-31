@@ -11,7 +11,6 @@ const muteBtn = callContent.querySelector('#control button#mute');
 const cameraSelect = callContent.querySelector('#control #camera-selection');
 const cameraBtn = callContent.querySelector('#control button#camera');
 const hangUpBtn = callContent.querySelector('#control button#hang-up');
-const modalWrapper = callView.querySelector('#modal-overlay');
 
 // Constant: List of STUN Servers
 const STUN_SERVER_LIST = [
@@ -31,16 +30,192 @@ let myNickname;
 let peerNickname;
 let muted = false;
 let cameraOff = false;
+let socket = createNewSocket();
 // Contain information for the joining room request
 const waitApprovalObj = {
   interval: null,
   counter: 0,
 };
 
-// Will use same domain (window.location) address to establish connection
-let socket = io.connect(window.location.host, {
-  path: `${window.location.pathname}socket.io`,
-});
+/**
+ * Helper function create new socket
+ *
+ * @return {Socket} SocketIO socket that will connect to signaling server
+ */
+function createNewSocket() {
+  // Will use same domain (window.location) address to establish connection
+  const newSocket = io.connect(window.location.host, {
+    path: `${window.location.pathname}socket.io`,
+  });
+
+  // SocketIO: "join-room" event - Another user asks to join currentRoom
+  // Current user needs to approve or reject the request within 30 second
+  newSocket.on('join-room', (nickname, socketId) => {
+    // Save peer's nickname
+    peerNickname = nickname;
+
+    // Display modal (count 30 second)
+    const modalWrapper = callView.querySelector('#confirm-join-overlay');
+    const confirmJoinModal = modalWrapper.querySelector('#confirm-join');
+    modalWrapper.style.display = 'flex';
+    confirmJoinModal.style.display = 'flex';
+    confirmJoinModal.querySelector('#request-nickname').innerText = nickname;
+    waitApprovalObj.counter = 30;
+    waitApprovalObj.interval = setInterval(() => {
+      // Display Message
+      const modalMsg = confirmJoinModal.querySelector('#confirm-message');
+      modalMsg.innerText = `Want to approve the user to join the chat? (${waitApprovalObj.counter})`;
+
+      if (waitApprovalObj.counter !== 0) {
+        // Reduce counter by 1
+        --waitApprovalObj.counter;
+      } else {
+        // Timeout (30 second passed)
+        clearInterval(waitApprovalObj.interval);
+
+        // Hide Modal
+        modalWrapper.style.display = 'none';
+        confirmJoinModal.style.display = 'none';
+      }
+    }, 1000);
+
+    // Press Approve
+    const approveBtn = confirmJoinModal.querySelector('#approve');
+    approveBtn.onclick = () => {
+      // Emit message indicating the peer has been approved
+      newSocket.emit('approve-peer', roomName, socketId);
+      // Hide Modal
+      modalWrapper.style.display = 'none';
+      confirmJoinModal.style.display = 'none';
+    };
+
+    // Press Decline
+    const declineBtn = confirmJoinModal.querySelector('#decline');
+    declineBtn.onclick = () => {
+      // Emit message indicating the peer has been declined
+      newSocket.emit('decline-peer', socketId);
+      // Hide Modal
+      modalWrapper.style.display = 'none';
+      confirmJoinModal.style.display = 'none';
+    };
+  });
+
+  // SocketIO: 'approved' event - When remote peer approved to join the room
+  //   Send the room owner a 'hello' message
+  newSocket.on('approved', async () => {
+    console.log('reached');
+    // Init call
+    await camStart();
+    makeConnection(); // create webRTC Connection
+    // Display
+    displayCall();
+
+    // Notify to room owner
+    newSocket.emit('hello', roomName);
+  });
+
+  // SocketIO: 'declined' event - When remote peer decline to join the room
+  //   Display message and enable form to enter another room name and nickname
+  newSocket.on('declined', () => {
+    // Clear Interval showing wait message
+    clearInterval(waitApprovalObj.interval);
+    // Display message
+    welcomeAlertMsg.innerText = 'Declined to join the room!! Try Again!!';
+
+    // Enable form
+    const formElements = welcomeForm.elements;
+    for (let index = 0; index < formElements.length; index++) {
+      formElements[index].disabled = false;
+    }
+  });
+
+  // SocketIO: 'welcome' event - When remote peer successfully joined the room
+  //   Send the webRTC offer to the remote peer
+  newSocket.on('welcome', async () => {
+    myDataChannel = myPeerConnection.createDataChannel('chat');
+    myDataChannel.addEventListener('message', (messageEvent) => {
+      console.log(messageEvent);
+    });
+    // After join, send WebRTC Offer
+    const webRTCOffer = await myPeerConnection.createOffer();
+    await myPeerConnection.setLocalDescription(webRTCOffer);
+    newSocket.emit('offer', roomName, webRTCOffer);
+  });
+
+  // SocketIO: 'offer' event - When the room owner send the webRTCOffer
+  //   Remote peer should "answer" to the offer
+  newSocket.on('offer', async (webRTCOffer) => {
+    // Set dataChannel for chatting
+    myPeerConnection.addEventListener('datachannel', (dataChannelEvent) => {
+      myDataChannel = dataChannelEvent.channel;
+      myDataChannel.addEventListener('message', (message) => {
+        console.log(message);
+      });
+    });
+    // Setup remoteDescription to establish connection
+    await myPeerConnection.setRemoteDescription(webRTCOffer);
+    // Create webRTCAnswer
+    const webRTCAnswer = await myPeerConnection.createAnswer();
+    myPeerConnection.setLocalDescription(webRTCAnswer);
+    newSocket.emit('answer', roomName, webRTCAnswer);
+  });
+
+  // SocketIO: 'answer' event - When the remote peer reply back to
+  //   the previous offer.
+  newSocket.on('answer', (webRTCAnswer) => {
+    // Set remote description of peer connection
+    myPeerConnection.setRemoteDescription(webRTCAnswer);
+  });
+
+  // SocketIO: 'ice-candidate' event
+  //   - Both party should share the ice-candidate information
+  newSocket.on('ice-candidate', (iceCandidate) => {
+    myPeerConnection.addIceCandidate(iceCandidate);
+  });
+
+  // SocketIO: 'peer-leaving' event
+  //   - Display modal popup that peer has been left
+  newSocket.on('peer-leaving', () => {
+    // Peer disconnected
+    peerNickname = '';
+    // Remote peerVideo
+    peerVideo.srcObject.getTracks().forEach((track) => {
+      track.stop();
+    });
+    peerVideo.srcObject = null;
+
+    // Display Modal
+    const modalWrapper = callView.querySelector('#disconnected-peer-overlay');
+    const disconnectedPeer = modalWrapper.querySelector('#disconnected-peer');
+    modalWrapper.style.display = 'flex';
+    disconnectedPeer.style.display = 'flex';
+
+    // Press Leave Room Button
+    const leaveRoomBtn = disconnectedPeer.querySelector('button#leave-room');
+    leaveRoomBtn.onclick = () => {
+      // Hide Modal
+      modalWrapper.style.display = 'none';
+      disconnectedPeer.style.display = 'none';
+      // Leave Chat Room
+      hangUp();
+    };
+
+    // Press Stay Button
+    const stayRoomBtn = disconnectedPeer.querySelector('button#stay-room');
+    stayRoomBtn.onclick = async () => {
+      // Create new RTCPeerConnection to standby for peer
+      await myPeerConnection.close();
+      myPeerConnection = undefined;
+      makeConnection();
+
+      // Hide Modal
+      modalWrapper.style.display = 'none';
+      disconnectedPeer.style.display = 'none';
+    };
+  });
+
+  return newSocket;
+}
 
 /**
  * Display Main/Welcome view
@@ -168,11 +343,19 @@ function hangUp() {
     // Clearly indicates that the stream no longer uses the source
     track.stop();
   });
+  // Stop PeerVideo
+  peerVideo.srcObject.getTracks().forEach((track) => {
+    track.stop();
+  });
   peerVideo.srcObject = null;
 
   // Leave room and notify to the peer
   socket.emit('leave-room', roomName, () => {
     roomName = '';
+
+    // Generate new socketIO socket (disconnect from previous)
+    socket.disconnect();
+    socket = createNewSocket();
     displayMain();
   });
 }
@@ -221,9 +404,7 @@ welcomeForm.addEventListener('submit', async (submitEvent) => {
 
             // Generate new socketIO socket (disconnect from previous)
             socket.disconnect();
-            socket = io.connect(window.location.host, {
-              path: `${window.location.pathname}socket.io`,
-            });
+            socket = createNewSocket();
             // Enable form
             for (let index = 0; index < formElements.length; index++) {
               formElements[index].disabled = false;
@@ -291,164 +472,6 @@ cameraBtn.addEventListener('click', () => {
 //   Notify the remotePeer('leave-room') and leave call
 hangUpBtn.addEventListener('click', () => {
   hangUp();
-});
-
-// SocketIO: "join-room" event - Another user asks to join currentRoom
-// Current user needs to approve or reject the request within 30 second
-socket.on('join-room', (nickname, socketId) => {
-  // Save peer's nickname
-  peerNickname = nickname;
-
-  // Display modal (count 30 second)
-  const confirmJoinModal = modalWrapper.querySelector('#confirm-join');
-  modalWrapper.style.display = 'flex';
-  confirmJoinModal.style.display = 'flex';
-  confirmJoinModal.querySelector('#request-nickname').innerText = nickname;
-  waitApprovalObj.counter = 30;
-  waitApprovalObj.interval = setInterval(() => {
-    // Display Message
-    const modalMsg = confirmJoinModal.querySelector('#confirm-message');
-    modalMsg.innerText = `Want to approve the user to join the chat? (${waitApprovalObj.counter})`;
-
-    if (waitApprovalObj.counter !== 0) {
-      // Reduce counter by 1
-      --waitApprovalObj.counter;
-    } else {
-      // Timeout (30 second passed)
-      clearInterval(waitApprovalObj.interval);
-
-      // Hide Modal
-      modalWrapper.style.display = 'none';
-      confirmJoinModal.style.display = 'none';
-    }
-  }, 1000);
-
-  // Press Approve
-  const approveBtn = confirmJoinModal.querySelector('#approve');
-  approveBtn.addEventListener('click', () => {
-    // Emit message indicating the peer has been approved
-    socket.emit('approve-peer', roomName, socketId);
-    // Hide Modal
-    modalWrapper.style.display = 'none';
-    confirmJoinModal.style.display = 'none';
-  });
-
-  // Press Decline
-  const declineBtn = confirmJoinModal.querySelector('#decline');
-  declineBtn.addEventListener('click', () => {
-    // Emit message indicating the peer has been declined
-    socket.emit('decline-peer', socketId);
-    // Hide Modal
-    modalWrapper.style.display = 'none';
-    confirmJoinModal.style.display = 'none';
-  });
-});
-
-// SocketIO: 'approved' event - When remote peer approved to join the room
-//   Send the room owner a 'hello' message
-socket.on('approved', async () => {
-  // Init call
-  await camStart();
-  makeConnection(); // create webRTC Connection
-  // Display
-  displayCall();
-
-  // Notify to room owner
-  socket.emit('hello', roomName);
-});
-
-// SocketIO: 'declined' event - When remote peer decline to join the room
-//   Display message and enable form to enter another room name and nickname
-socket.on('declined', () => {
-  // Clear Interval showing wait message
-  clearInterval(waitApprovalObj.interval);
-  // Display message
-  welcomeAlertMsg.innerText = 'Declined to join the room!! Try Again!!';
-
-  // Enable form
-  const formElements = welcomeForm.elements;
-  for (let index = 0; index < formElements.length; index++) {
-    formElements[index].disabled = false;
-  }
-});
-
-// SocketIO: 'welcome' event - When remote peer successfully joined the room
-//   Send the webRTC offer to the remote peer
-socket.on('welcome', async () => {
-  myDataChannel = myPeerConnection.createDataChannel('chat');
-  myDataChannel.addEventListener('message', (messageEvent) => {
-    console.log(messageEvent);
-  });
-  // After join, send WebRTC Offer
-  const webRTCOffer = await myPeerConnection.createOffer();
-  myPeerConnection.setLocalDescription(webRTCOffer);
-  socket.emit('offer', roomName, webRTCOffer);
-});
-
-// SocketIO: 'offer' event - When the room owner send the webRTCOffer
-//   Remote peer should "answer" to the offer
-socket.on('offer', async (webRTCOffer) => {
-  // Set dataChannel for chatting
-  myPeerConnection.addEventListener('datachannel', (dataChannelEvent) => {
-    myDataChannel = dataChannelEvent.channel;
-    myDataChannel.addEventListener('message', (message) => {
-      console.log(message);
-    });
-  });
-  // Setup remoteDescription to establish connection
-  myPeerConnection.setRemoteDescription(webRTCOffer);
-  // Create webRTCAnswer
-  const webRTCAnswer = await myPeerConnection.createAnswer();
-  myPeerConnection.setLocalDescription(webRTCAnswer);
-  socket.emit('answer', roomName, webRTCAnswer);
-});
-
-// SocketIO: 'answer' event - When the remote peer reply back to
-//   the previous offer.
-socket.on('answer', (webRTCAnswer) => {
-  // Set remote description of peer connection
-  myPeerConnection.setRemoteDescription(webRTCAnswer);
-});
-
-// SocketIO: 'ice-candidate' event
-//   - Both party should share the ice-candidate information
-socket.on('ice-candidate', (iceCandidate) => {
-  myPeerConnection.addIceCandidate(iceCandidate);
-});
-
-// SocketIO: 'peer-leaving' event
-//   - Display modal popup that peer has been left
-socket.on('peer-leaving', () => {
-  // Peer disconnected
-  peerNickname = '';
-  // Remote peerVideo
-  peerVideo.srcObject.getTracks().forEach((track) => {
-    track.stop();
-  });
-  peerVideo.srcObject = null;
-
-  // Display Modal
-  const disconnectedPeer = modalWrapper.querySelector('#disconnected-peer');
-  modalWrapper.style.display = 'flex';
-  disconnectedPeer.style.display = 'flex';
-
-  // Press Leave Room Button
-  const leaveRoomBtn = disconnectedPeer.querySelector('button#leave-room');
-  leaveRoomBtn.addEventListener('click', () => {
-    // Hide Modal
-    modalWrapper.style.display = 'none';
-    disconnectedPeer.style.display = 'none';
-    // Leave Chat Room
-    hangUp();
-  });
-
-  // Press Stay Button
-  const stayRoomBtn = disconnectedPeer.querySelector('button#stay-room');
-  stayRoomBtn.addEventListener('click', () => {
-    // Hide Modal
-    modalWrapper.style.display = 'none';
-    disconnectedPeer.style.display = 'none';
-  });
 });
 
 // Website need to display the main screen at the beginning
