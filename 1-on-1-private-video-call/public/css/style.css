@@ -1,6 +1,6 @@
 html,
 body {
-  margin: 1px;
+  margin: 0;
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -134,12 +134,46 @@ h3 {
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  background: black;
 }
 
 #call #call-content #stream-wrapper {
   flex-grow: 1;
+  flex-shrink: 1;
   flex-basis: auto;
   justify-content: center;
+  display: flex;
+  width: 100%;
+  max-height: calc(100vh - 50px);
+}
+
+#call #call-content #stream-wrapper div {
+  margin: 5px;
+}
+
+@media (orientation: landscape) {
+  #call #call-content #stream-wrapper {
+    flex-direction: row;
+  }
+
+  #call #call-content #stream-wrapper div {
+    width: 50vw;
+  }
+}
+
+@media (orientation: portrait) {
+  #call #call-content #stream-wrapper {
+    flex-direction: column;
+  }
+
+  #call #call-content #stream-wrapper div {
+    height: calc(50% - 10px);
+  }
+}
+
+#call #call-content #stream-wrapper div video {
+  width: 100%;
+  height: 100%;
 }
 
 #call #call-content #control {
@@ -152,6 +186,8 @@ h3 {
   padding-left: 10px;
   background: rgb(240, 240, 240);
   height: 50px;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 #call #call-content #control div:first-child {
