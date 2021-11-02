@@ -68,11 +68,11 @@ socketIOServer.on('connection', (socket) => {
   // 'approve-peer': when the room owner approved the peer
   //   Should join the request user to the room
   //   and send notification ('approved')
-  socket.on('approve-peer', (roomName, socketId) => {
+  socket.on('approve-peer', (roomName, ownerNickname, socketId) => {
     // Join user with socketId to the room
     socketIOServer.in(socketId).socketsJoin(roomName);
     // Notify the user that the request has been approved
-    socketIOServer.in(socketId).emit('approved');
+    socketIOServer.in(socketId).emit('approved', ownerNickname);
   });
 
   // 'decline-peer': when the room owner decline peer joining the room

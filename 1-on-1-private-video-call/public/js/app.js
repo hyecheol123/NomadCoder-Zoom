@@ -8,7 +8,7 @@ const callContent = callView.querySelector('#call-content');
 const myVideo = callContent.querySelector('#myVideo');
 const peerVideo = callContent.querySelector('#peerVideo');
 const muteBtn = callContent.querySelector('#control button#mute');
-const cameraSelect = callContent.querySelector('#control #camera-selection');
+const cameraSelect = callContent.querySelector('#camera-selection');
 const cameraBtn = callContent.querySelector('#control button#camera');
 const hangUpBtn = callContent.querySelector('#control button#hang-up');
 
@@ -85,11 +85,14 @@ function createNewSocket() {
     const approveBtn = confirmJoinModal.querySelector('#approve');
     approveBtn.onclick = () => {
       // Emit message indicating the peer has been approved
-      newSocket.emit('approve-peer', roomName, socketId);
+      newSocket.emit('approve-peer', roomName, myNickname, socketId);
       // Hide Modal
       modalWrapper.style.display = 'none';
       confirmJoinModal.style.display = 'none';
       clearInterval(waitApprovalObj.interval);
+
+      // Display peerNickname
+      callContent.querySelector('#peerNickname').innerText = peerNickname;
     };
 
     // Press Decline
@@ -105,12 +108,15 @@ function createNewSocket() {
 
   // SocketIO: 'approved' event - When remote peer approved to join the room
   //   Send the room owner a 'hello' message
-  newSocket.on('approved', async () => {
+  newSocket.on('approved', async (ownerNickname) => {
     // Init call
     await camStart();
     makeConnection(); // create webRTC Connection
     // Display
     displayCall();
+    // Nickname
+    peerNickname = ownerNickname;
+    callContent.querySelector('#peerNickname').innerText = ownerNickname;
 
     // Notify to room owner
     newSocket.emit('hello', roomName);
@@ -180,6 +186,7 @@ function createNewSocket() {
   newSocket.on('peer-leaving', () => {
     // Peer disconnected
     peerNickname = '';
+    callContent.querySelector('#peerNickname').innerText = peerNickname;
     // Remote peerVideo
     peerVideo.srcObject.getTracks().forEach((track) => {
       track.stop();
@@ -243,6 +250,9 @@ function displayMain() {
  * Display Call view
  */
 function displayCall() {
+  // Nickname
+  callContent.querySelector('#myNickname').innerText = myNickname;
+
   welcomeView.style.display = 'none';
   callView.style.display = 'flex';
 }
@@ -339,6 +349,8 @@ function hangUp() {
   myDataChannel = null;
   myNickname = '';
   peerNickname = '';
+  callContent.querySelector('#myNickname').innerText = myNickname;
+  callContent.querySelector('#peerNickname').innerText = peerNickname;
 
   // Stop Video
   myStream.getTracks().forEach((track) => {

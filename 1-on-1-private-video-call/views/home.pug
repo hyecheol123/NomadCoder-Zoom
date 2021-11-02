@@ -27,16 +27,15 @@ html(lang="en")
           div#stream-wrapper
             div#myStream
               video#myVideo(autoPlay, playsinline)
+              span#myNickname
+              select#camera-selection
             div#peerStream
               video#peerVideo(autoPlay, playsinline)
+              span#peerNickname
           div#control
-            div
-              button#mute <i class="fas fa-microphone-slash"></i>
-            div
-              select#camera-selection
-              button#camera <i class="fas fa-video-slash"></i>
-            div
-              button#hang-up <i class="fas fa-phone-slash"></i>
+            button#mute <i class="fas fa-microphone-slash"></i>
+            button#camera <i class="fas fa-video-slash"></i>
+            button#hang-up <i class="fas fa-phone-slash"></i>
             button#chat-button <i class="fas fa-comments"></i>
         div#confirm-join-overlay.modal-overlay
           div#confirm-join.modal
