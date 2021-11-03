@@ -25,13 +25,17 @@ html(lang="en")
       div#call
         div#call-content
           div#stream-wrapper
-            div#myStream
+            div#myStream.stream
               video#myVideo(autoPlay, playsinline)
               span#myNickname
               select#camera-selection
-            div#peerStream
+            div#peerStream.stream
               video#peerVideo(autoPlay, playsinline)
               span#peerNickname
+            div#chat-wrapper(style={display: 'none'}) 
+              div#chat-content-wrapper
+              form#chat-input
+                textarea(placeholder="Press Enter To Send Message", required)
           div#control
             button#mute <i class="fas fa-microphone-slash"></i>
             button#camera <i class="fas fa-video-slash"></i>

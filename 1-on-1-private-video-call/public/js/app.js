@@ -7,10 +7,12 @@ const callView = document.getElementById('call');
 const callContent = callView.querySelector('#call-content');
 const myVideo = callContent.querySelector('#myVideo');
 const peerVideo = callContent.querySelector('#peerVideo');
+const chatBox = callContent.querySelector('#chat-wrapper');
 const muteBtn = callContent.querySelector('#control button#mute');
 const cameraSelect = callContent.querySelector('#camera-selection');
 const cameraBtn = callContent.querySelector('#control button#camera');
 const hangUpBtn = callContent.querySelector('#control button#hang-up');
+const chatBtn = callContent.querySelector('#control button#chat-button');
 
 // Constant: List of STUN Servers
 const STUN_SERVER_LIST = [
@@ -488,6 +490,15 @@ cameraBtn.addEventListener('click', () => {
 //   Notify the remotePeer('leave-room') and leave call
 hangUpBtn.addEventListener('click', () => {
   hangUp();
+});
+
+// EventListener (chatBtn): Display/Hide Chat Box
+chatBtn.addEventListener('click', () => {
+  if (chatBox.style.display === 'none') {
+    chatBox.style.display = 'flex';
+  } else {
+    chatBox.style.display = 'none';
+  }
 });
 
 // Website need to display the main screen at the beginning
