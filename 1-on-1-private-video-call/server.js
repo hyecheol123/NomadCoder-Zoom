@@ -114,7 +114,15 @@ socketIOServer.on('connection', (socket) => {
     done();
   });
 
-  // TODO: disconnecting --> signal to the remote peer
+  // 'disconnecting': When user disconnected from the server
+  socket.on('disconnecting', () => {
+    socket.rooms.forEach((room) => {
+      // Notify other peer that current user is leaving
+      socket.to(room).emit('peer-leaving');
+      // Leave the room
+      socket.leave(room);
+    });
+  });
 });
 
 httpServer.listen(3001, () => {

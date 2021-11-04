@@ -27,7 +27,7 @@ Only the participants share the contents; server only used to create connections
   - When the room owner decline the request, the other user should return to the main screen after warning.
 - When one user exit, the other user is asked to leave or wait for other participants.
 - Remove stream when a peer leaves the room.
-- TODO: P2P chat (Use Datachannel)
+- P2P chat (Use Datachannel)
 - Design for both mobile and desktop website.
 
 |           ![]()            |
