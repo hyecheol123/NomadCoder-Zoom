@@ -13,6 +13,8 @@ const cameraSelect = callContent.querySelector('#camera-selection');
 const cameraBtn = callContent.querySelector('#control button#camera');
 const hangUpBtn = callContent.querySelector('#control button#hang-up');
 const chatBtn = callContent.querySelector('#control button#chat-button');
+const chatList = chatBox.querySelector('#chat-content-wrapper ul');
+const chatTextArea = chatBox.querySelector('form#chat-input textarea');
 
 // Constant: List of STUN Servers
 const STUN_SERVER_LIST = [
@@ -143,9 +145,13 @@ function createNewSocket() {
   //   Send the webRTC offer to the remote peer
   newSocket.on('welcome', async () => {
     myDataChannel = myPeerConnection.createDataChannel('chat');
+
+    // EventListener: When datachannel receives new message
     myDataChannel.addEventListener('message', (messageEvent) => {
-      console.log(messageEvent);
+      // Display peer's message
+      addChatMessage('peer-chat', messageEvent.data);
     });
+
     // After join, send WebRTC Offer
     const webRTCOffer = await myPeerConnection.createOffer();
     await myPeerConnection.setLocalDescription(webRTCOffer);
@@ -158,10 +164,14 @@ function createNewSocket() {
     // Set dataChannel for chatting
     myPeerConnection.addEventListener('datachannel', (dataChannelEvent) => {
       myDataChannel = dataChannelEvent.channel;
-      myDataChannel.addEventListener('message', (message) => {
-        console.log(message);
+
+      // EventListener: When datachannel receives new message
+      myDataChannel.addEventListener('message', (messageEvent) => {
+        // Display peer's message
+        addChatMessage('peer-chat', messageEvent.data);
       });
     });
+
     // Setup remoteDescription to establish connection
     await myPeerConnection.setRemoteDescription(webRTCOffer);
     // Create webRTCAnswer
@@ -342,6 +352,35 @@ function makeConnection() {
 }
 
 /**
+ * Helper method to add message to the chatList
+ *
+ * @param {string} chatType Based on the sender of the message
+ *   (either peer or me), the chatType is defined.
+ *   Use 'my-chat' for the message that current user send;
+ *   Otherwise, use 'peer-chat'
+ * @param {string} msg The content of message
+ */
+function addChatMessage(chatType, msg) {
+  // Create HTML Elements
+  const listElem = document.createElement('li');
+  const divSpacer = document.createElement('div');
+  const divSpanWrapper = document.createElement('div');
+  const span = document.createElement('span');
+
+  // Define Proper class Type
+  listElem.classList.add(chatType);
+  divSpacer.classList.add('chat-spacer');
+  divSpanWrapper.classList.add('chat-span-wrapper');
+
+  // Add Message
+  span.innerText = msg;
+  divSpanWrapper.appendChild(span);
+  listElem.appendChild(divSpacer);
+  listElem.appendChild(divSpanWrapper);
+  chatList.appendChild(listElem);
+}
+
+/**
  * Helper function to leave a call
  */
 function hangUp() {
@@ -498,6 +537,20 @@ chatBtn.addEventListener('click', () => {
     chatBox.style.display = 'flex';
   } else {
     chatBox.style.display = 'none';
+  }
+});
+
+// EventListener (chatTextArea): When enter pressed, submit the form
+// Form behavior is defined when dataChannel established
+chatTextArea.addEventListener('keydown', (keyboardEvent) => {
+  if (keyboardEvent.key === 'Enter') {
+    keyboardEvent.preventDefault();
+    const msg = chatTextArea.value;
+
+    myDataChannel?.send(msg); // Send Chat
+    // Display the message
+    addChatMessage('my-chat', msg);
+    chatTextArea.value = '';
   }
 });
 

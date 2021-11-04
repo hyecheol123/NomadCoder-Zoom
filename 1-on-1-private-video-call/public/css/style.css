@@ -211,7 +211,7 @@ h3 {
   right: 0px;
   bottom: 0px;
   margin: 10px;
-  background: rgba(144, 130, 235, 0.555);
+  background: rgba(144, 130, 235, 0.85);
   box-shadow: 0 8px 32px 0 rgba(131, 131, 131, 0.185);
   border-radius: 10px;
 }
@@ -370,6 +370,7 @@ h3 {
 }
 
 #call .modal-overlay {
+  z-index: 5;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -386,7 +387,8 @@ h3 {
 }
 
 #call .modal {
-  background: rgba(144, 130, 235, 0.555);
+  z-index: 6;
+  background: rgba(144, 130, 235, 0.85);
   box-shadow: 0 8px 32px 0 rgba(131, 131, 131, 0.185);
   backdrop-filter: blur(20px);
   border-radius: 10px;
