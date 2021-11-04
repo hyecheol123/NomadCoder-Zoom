@@ -113,6 +113,9 @@ function createNewSocket() {
   // SocketIO: 'approved' event - When remote peer approved to join the room
   //   Send the room owner a 'hello' message
   newSocket.on('approved', async (ownerNickname) => {
+    // Clear Interval showing wait message
+    clearInterval(waitApprovalObj.interval);
+
     // Init call
     await camStart();
     makeConnection(); // create webRTC Connection
@@ -204,6 +207,7 @@ function createNewSocket() {
       track.stop();
     });
     peerVideo.srcObject = null;
+    chatList.innerHTML = '';
 
     // Display Modal
     const modalWrapper = callView.querySelector('#disconnected-peer-overlay');
@@ -256,6 +260,7 @@ function displayMain() {
 
   welcomeView.style.display = 'flex';
   callView.style.display = 'none';
+  chatBox.style.display = 'none';
 }
 
 /**
@@ -378,6 +383,9 @@ function addChatMessage(chatType, msg) {
   listElem.appendChild(divSpacer);
   listElem.appendChild(divSpanWrapper);
   chatList.appendChild(listElem);
+
+  // Display chatBox
+  chatBox.style.display = 'flex';
 }
 
 /**
@@ -390,6 +398,7 @@ function hangUp() {
   myDataChannel = null;
   myNickname = '';
   peerNickname = '';
+  chatList.innerHTML = '';
   callContent.querySelector('#myNickname').innerText = myNickname;
   callContent.querySelector('#peerNickname').innerText = peerNickname;
 

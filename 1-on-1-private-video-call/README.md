@@ -28,6 +28,7 @@ Only the participants share the contents; server only used to create connections
 - When one user exit, the other user is asked to leave or wait for other participants.
 - Remove stream when a peer leaves the room.
 - P2P chat (Use Datachannel)
+  - When new message arrives, automatically pop-up chat messages
 - Design for both mobile and desktop website.
 
 |           ![]()            |
