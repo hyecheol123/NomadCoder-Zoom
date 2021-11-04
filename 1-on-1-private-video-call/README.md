@@ -43,4 +43,5 @@ Only the participants share the contents; server only used to create connections
 | :---------------------------------------------------------------------------------------------------------------------------------------: |
 |                                   _Demo Image of 1 on 1 Private Video Call: Chat Room View (Portrait)_                                    |
 
-Code Link: https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/1-on-1-private-video-call
+Code Link: https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/1-on-1-private-video-call  
+Demo Link: https://demo1.hcjang.com/private-video-call/
