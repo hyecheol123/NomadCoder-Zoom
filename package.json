@@ -14,10 +14,12 @@
   "scripts": {
     "start:open-chats": "babel-node open-chats/server.js",
     "dev:open-chats": "nodemon --exec babel-node open-chats/server.js -L",
+    "build:open-chats": "rm -rfv dist-open-chats/ && mkdir -v dist-open-chats && cp -rv open-chats/* dist-open-chats/ && npx babel open-chats/server.js --out-file dist-open-chats/dist-server.js",
     "start:private-call": "babel-node 1-on-1-private-video-call/server.js",
     "dev:private-call": "nodemon --exec babel-node 1-on-1-private-video-call/server.js -L",
-    "lint": "prettier --check \"src/**/*.js\" && eslint \"src/**/*.js\"",
-    "lint:fix": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\""
+    "build:private-call": "rm -rfv dist-1-on-1-private-video-call/ && mkdir -v dist-1-on-1-private-video-call && cp -rv 1-on-1-private-video-call/* dist-1-on-1-private-video-call/ && npx babel 1-on-1-private-video-call/server.js --out-file dist-1-on-1-private-video-call/dist-server.js",
+    "lint": "prettier --check \"**/*.js\" && eslint \"**/*.js\"",
+    "lint:fix": "prettier --write \"**/*.js\" && eslint --fix \"**/*.js\""
   },
   "homepage": "https://github.com/hyecheol123/NomadCoder-Zoom#readme",
   "devDependencies": {

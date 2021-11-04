@@ -1,3 +1,6 @@
+# dist directories
+dist-open-chats/
+dist-1-on-1-private-video-call/
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,visualstudiocode

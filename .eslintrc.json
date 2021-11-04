@@ -14,5 +14,5 @@
     "rules": {
         "prettier/prettier": "error"
     },
-    "ignorePatterns": ["admin-panel/"]
+    "ignorePatterns": ["dist-*/"]
 }
