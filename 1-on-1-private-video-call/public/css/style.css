@@ -234,6 +234,91 @@ h3 {
   padding: 7px;
 }
 
+#call #call-content #stream-wrapper #chat-wrapper #chat-content-wrapper ul {
+  overflow: hidden;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+#call #call-content #stream-wrapper #chat-wrapper #chat-content-wrapper ul li {
+  margin-top: 5px;
+  display: flex;
+}
+
+#call
+  #call-content
+  #stream-wrapper
+  #chat-wrapper
+  #chat-content-wrapper
+  ul
+  li.my-chat {
+  flex-direction: row;
+}
+
+#call
+  #call-content
+  #stream-wrapper
+  #chat-wrapper
+  #chat-content-wrapper
+  ul
+  li.peer-chat {
+  flex-direction: row-reverse;
+}
+
+#call
+  #call-content
+  #stream-wrapper
+  #chat-wrapper
+  #chat-content-wrapper
+  ul
+  li
+  div.chat-spacer {
+  min-width: 25%;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+#call
+  #call-content
+  #stream-wrapper
+  #chat-wrapper
+  #chat-content-wrapper
+  ul
+  li
+  div.chat-span-wrapper {
+  flex-grow: 0;
+  padding: 10px;
+  text-align: left;
+  border-radius: 5px;
+}
+
+#call
+  #call-content
+  #stream-wrapper
+  #chat-wrapper
+  #chat-content-wrapper
+  ul
+  li.my-chat
+  div.chat-span-wrapper {
+  background-color: yellow;
+}
+
+#call
+  #call-content
+  #stream-wrapper
+  #chat-wrapper
+  #chat-content-wrapper
+  ul
+  li.peer-chat
+  div.chat-span-wrapper {
+  background-color: lightgray;
+}
+
 #call #call-content #stream-wrapper #chat-wrapper #chat-input {
   flex-grow: 1;
   max-height: 100px;
