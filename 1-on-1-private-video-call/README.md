@@ -31,8 +31,16 @@ Only the participants share the contents; server only used to create connections
   - When new message arrives, automatically pop-up chat messages
 - Design for both mobile and desktop website.
 
-|           ![]()            |
-| :------------------------: |
-| _Demo Image of Zoom Clone_ |
+|                           ![]()                           |
+| :-------------------------------------------------------: |
+| _Demo Image of 1 on 1 Private Video Call: Join Room View_ |
+
+|                                 ![]()                                 |
+| :-------------------------------------------------------------------: |
+| _Demo Image of 1 on 1 Private Video Call: Chat Room View (Landscape)_ |
+
+|                                ![]()                                 |
+| :------------------------------------------------------------------: |
+| _Demo Image of 1 on 1 Private Video Call: Chat Room View (Portrait)_ |
 
 Code Link: https://github.com/hyecheol123/NomadCoder-Zoom/tree/main/1-on-1-private-video-call
