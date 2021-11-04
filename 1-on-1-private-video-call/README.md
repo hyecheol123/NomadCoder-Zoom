@@ -1,7 +1,7 @@
 # 1-on-1 Private Video Call
 
 Followed the lecture contents to build Zoom Clone.
-Used NodeJS, express, SocketIO, WebRTC, Pub (Template Engine), and CSS/vanilla-JS.
+Used NodeJS, express, SocketIO, WebRTC, Pug (Template Engine), and CSS/vanilla-JS.
 
 Using WebRTC, all the video, audio, and text messages does not pass to the server.  
 Only the participants share the contents; server only used to create connections between the peers
