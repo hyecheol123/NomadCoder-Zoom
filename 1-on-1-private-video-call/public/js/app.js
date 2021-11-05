@@ -42,6 +42,14 @@ const waitApprovalObj = {
 };
 
 /**
+ * Function to set custom --vh that matches with innerHeight of screen
+ */
+function setScreenSize() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+/**
  * Helper function create new socket
  *
  * @return {Socket} SocketIO socket that will connect to signaling server
@@ -563,5 +571,11 @@ chatTextArea.addEventListener('keydown', (keyboardEvent) => {
   }
 });
 
+// EventListener: Dynamically change screen size
+window.addEventListener('resize', () => {
+  setScreenSize();
+});
+
 // Website need to display the main screen at the beginning
+setScreenSize();
 displayMain();
